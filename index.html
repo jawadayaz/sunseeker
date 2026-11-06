@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sunseeker Remote Agent v01.00</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #0f172a;
+      color: #f8fafc;
+      min-height: 100vh;
+      padding-bottom: 48px;
+    }
+    header {
+      background: #1e293b;
+      border-bottom: 1px solid #334155;
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .brand h1 {
+      font-size: 20px;
+      font-weight: 700;
+      color: #ffffff;
+    }
+    .version-badge {
+      background: rgba(245, 200, 66, 0.15);
+      color: #f5c842;
+      border: 1px solid #f5c842;
+      font-weight: 700;
+      font-size: 12px;
+      padding: 3px 10px;
+      border-radius: 999px;
+    }
+    .controls-bar {
+      max-width: 1120px;
+      margin: 20px auto;
+      padding: 16px 20px;
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .control-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    label {
+      font-size: 13px;
+      color: #94a3b8;
+      font-weight: 600;
+    }
+    select {
+      background: #0f172a;
+      color: #f8fafc;
+      border: 1px solid #475569;
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 14px;
+    }
+    .toggle-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #0f172a;
+      border: 1px solid #f59e0b;
+      color: #fbbf24;
+      padding: 7px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .btn {
+      background: #2563eb;
+      color: #ffffff;
+      border: none;
+      border-radius: 8px;
+      padding: 9px 16px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .btn:hover { background: #1d4ed8; }
+    .btn:disabled { opacity: 0.55; cursor: not-allowed; }
+    .btn-green { background: #16a34a; }
+    .btn-green:hover { background: #15803d; }
+    .btn-slate { background: #334155; }
+    .btn-slate:hover { background: #475569; }
+    .main-grid {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 0 20px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
+      gap: 16px;
+    }
+    .card {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 12px;
+      padding: 18px 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 14px;
+    }
+    .card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .card-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #f8fafc;
+    }
+    .card-schedule {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 6px;
+      background: #0f172a;
+      color: #38bdf8;
+      border: 1px solid #0284c7;
+      white-space: nowrap;
+    }
+    .card-desc {
+      font-size: 13px;
+      color: #94a3b8;
+      line-height: 1.5;
+    }
+    .status-chip {
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 6px;
+    }
+    .chip-ready { background: rgba(22, 163, 74, 0.2); color: #4ade80; border: 1px solid #16a34a; }
+    .chip-pending { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid #d97706; }
+    .panel {
+      max-width: 1120px;
+      margin: 20px auto 0;
+      padding: 0 20px;
+    }
+    .panel-box {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 12px;
+      padding: 18px 20px;
+    }
+    .panel-box h3 {
+      font-size: 15px;
+      margin-bottom: 12px;
+      color: #e2e8f0;
+    }
+    .file-list {
+      list-style: none;
+      display: grid;
+      gap: 8px;
+    }
+    .file-item {
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 8px;
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 13px;
+    }
+    .log-box {
+      background: #090d16;
+      border: 1px solid #334155;
+      border-radius: 8px;
+      padding: 12px 14px;
+      font-family: monospace;
+      font-size: 12px;
+      color: #93c5fd;
+      max-height: 220px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <h1>Sunseeker Properties &#8212; Unified Remote Agent</h1>
+      <span class="version-badge" id="app-version">v01.00</span>
+    </div>
+    <div class="control-group">
+      <span id="trigger-badge" class="status-chip chip-ready">Cloud Schedule: 9:00 AM IST Daily</span>
+      <button class="btn btn-slate" id="btn-install-trigger" onclick="installTrigger()">Verify / Install Cloud Trigger</button>
+    </div>
+  </header>
+
+  <section class="controls-bar">
+    <div class="control-group">
+      <label for="select-month">Billing Period:</label>
+      <select id="select-month" onchange="refreshStatus()">
+        <option value="1">January</option>
+        <option value="2">February</option>
+        <option value="3">March</option>
+        <option value="4">April</option>
+        <option value="5">May</option>
+        <option value="6">June</option>
+        <option value="7">July</option>
+        <option value="8">August</option>
+        <option value="9">September</option>
+        <option value="10" selected>October</option>
+        <option value="11">November</option>
+        <option value="12">December</option>
+      </select>
+      <select id="select-year" onchange="refreshStatus()">
+        <option value="2025">2025</option>
+        <option value="2026" selected>2026</option>
+        <option value="2027">2027</option>
+      </select>
+      <button class="btn btn-slate" id="btn-refresh" onclick="refreshStatus()">Refresh Folder Status</button>
+    </div>
+
+    <label class="toggle-pill" for="chk-test-mode">
+      <input type="checkbox" id="chk-test-mode" checked />
+      <span>Test Mode (Send Final Emails Only to jawadayaz@gmail.com)</span>
+    </label>
+  </section>
+
+  <main class="main-grid">
+    <!-- Card 1: ZoHouse & UBL Rental Invoices -->
+    <div class="card" id="card-rent">
+      <div>
+        <div class="card-header">
+          <div class="card-title">1. ZoHouse &amp; UBL Rental Invoices</div>
+          <span class="card-schedule">28th of Month</span>
+        </div>
+        <p class="card-desc" style="margin-top:8px;">
+          Generates ZoHouse (&#8377;4,57,920) &amp; UBL (&#8377;2,88,000) PDFs into <strong>Sunseeker Invoices/&lt;Mmm YY&gt;</strong>, automatically emails unsigned UBL to Sandeep GB for digital signature, and stages ZoHouse Gmail draft with 1-tap approval.
+        </p>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;">
+        <span id="status-rent" class="status-chip chip-ready">Ready</span>
+        <button class="btn" id="btn-run-rent" onclick="triggerWorkflow('runRentInvoices')">Generate &amp; Stage Rental Invoices</button>
+      </div>
+    </div>
+
+    <!-- Card 2: UBL Signed PDF Watcher -->
+    <div class="card" id="card-ubl-signed">
+      <div>
+        <div class="card-header">
+          <div class="card-title">2. UBL Signed PDF Replacement &amp; Draft</div>
+          <span class="card-schedule">Auto-Watcher</span>
+        </div>
+        <p class="card-desc" style="margin-top:8px;">
+          Detects Sandeep GB's reply with the digitally signed UBL invoice PDF, overwrites the unsigned file in <strong>Sunseeker Invoices/&lt;Mmm YY&gt;</strong>, and stages the UBL Gmail draft with 1-tap approval.
+        </p>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;">
+        <span id="status-ubl" class="status-chip chip-ready">Monitored</span>
+        <button class="btn" id="btn-check-ubl" onclick="triggerWorkflow('checkSignedUbl')">Check Signed UBL Reply</button>
+      </div>
+    </div>
+
+    <!-- Card 3: End-of-Month GST Bill Scanner -->
+    <div class="card" id="card-gst-bills">
+      <div>
+        <div class="card-header">
+          <div class="card-title">3. Sunseeker Vendor GST Bill Scanner</div>
+          <span class="card-schedule">Last Day of Month</span>
+        </div>
+        <p class="card-desc" style="margin-top:8px;">
+          Scans Gmail for Sunseeker bills with a GST component (strictly ignoring D.M &amp; SONS, Airtel, and non-GST bills) and emails a 1-tap <strong>Save All to Folder</strong> button.
+        </p>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;">
+        <span id="status-bills" class="status-chip chip-ready">Filtered (GST Only)</span>
+        <button class="btn" id="btn-scan-bills" onclick="triggerWorkflow('scanGstBills')">Scan Inbox for GST Bills</button>
+      </div>
+    </div>
+
+    <!-- Card 4: Alaya Stays -> Elivaas Invoice Generator -->
+    <div class="card" id="card-elivaas">
+      <div>
+        <div class="card-header">
+          <div class="card-title">4. Alaya Stays Payout &#8594; Elivaas Invoice</div>
+          <span class="card-schedule">Days 1&#8211;10</span>
+        </div>
+        <p class="card-desc" style="margin-top:8px;">
+          Parses incoming <strong>owner.payout@elivaas.com</strong> Excel (5% &amp; 18% GST rows), generates <strong>Sunseeker Invoice - Elivaas - &lt;Month YYYY&gt;.pdf</strong> into the month folder, and stages the reply draft with 1-tap approval.
+        </p>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;">
+        <span id="status-elivaas" class="status-chip chip-ready">Ready</span>
+        <button class="btn" id="btn-run-elivaas" onclick="triggerWorkflow('runElivaasInvoice')">Generate Elivaas Invoice &amp; Draft</button>
+      </div>
+    </div>
+
+    <!-- Card 5: 4i Advisory Monthly GST Filing Reply -->
+    <div class="card" id="card-gst-reply">
+      <div>
+        <div class="card-header">
+          <div class="card-title">5. 4i Advisory (Sandeep GB) GST Reply</div>
+          <span class="card-schedule">Days 1&#8211;10</span>
+        </div>
+        <p class="card-desc" style="margin-top:8px;">
+          Finds Sandeep GB's <strong>Sunseeker GST - &lt;Month YYYY&gt;</strong> email, attaches all rental invoices (ZoHouse, signed UBL, Elivaas) and GST bills in the month folder, and stages the reply draft with 1-tap approval.
+        </p>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;">
+        <span id="status-gst-reply" class="status-chip chip-ready">Ready</span>
+        <button class="btn btn-green" id="btn-stage-gst" onclick="triggerWorkflow('stageGstReply')">Stage GST Reply Draft</button>
+      </div>
+    </div>
+  </main>
+
+  <section class="panel">
+    <div class="panel-box">
+      <h3 id="folder-heading">Files in Sunseeker Invoices / Oct 26</h3>
+      <ul class="file-list" id="folder-files-list">
+        <li class="file-item">
+          <span>Sunseeker Invoice - Elivaas - October 2026.pdf</span>
+          <span class="status-chip chip-ready">Saved</span>
+        </li>
+        <li class="file-item">
+          <span>Sunseeker Invoice - UBL (2B).Oct 26 - Invoice.pdf (Digitally Signed)</span>
+          <span class="status-chip chip-ready">Saved</span>
+        </li>
+        <li class="file-item">
+          <span>Sunseeker Invoice - Zohouse Oct 26 - Invoice.pdf</span>
+          <span class="status-chip chip-ready">Saved</span>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-box">
+      <h3>Remote Agent Activity Log</h3>
+      <div class="log-box" id="activity-log">[v01.00] Unified Sunseeker Remote Agent initialized. Select a month and trigger any workflow or verify the daily 9:00 AM IST cloud schedule.</div>
+    </div>
+  </section>
+
+  <script>
+    const APP_VERSION = "v01.00";
+    const MONTH_ABBR = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+
+    function appendLog(msg) {
+      const box = document.getElementById("activity-log");
+      const ts = new Date().toLocaleTimeString();
+      box.textContent = "[" + ts + "] " + msg + "\n" + box.textContent;
+    }
+
+    function getSelectedPeriod() {
+      const month = parseInt(document.getElementById("select-month").value, 10);
+      const year = parseInt(document.getElementById("select-year").value, 10);
+      const isTest = document.getElementById("chk-test-mode").checked;
+      const folderName = MONTH_ABBR[month - 1] + " " + String(year).slice(-2);
+      return { month, year, isTest, folderName };
+    }
+
+    function renderFilesList(folderName, files) {
+      document.getElementById("folder-heading").textContent = "Files in Sunseeker Invoices / " + folderName;
+      const ul = document.getElementById("folder-files-list");
+      ul.innerHTML = "";
+      if (!files || files.length === 0) {
+        const li = document.createElement("li");
+        li.className = "file-item";
+        li.innerHTML = "<span>No files saved yet for " + folderName + "</span><span class='status-chip chip-pending'>Empty</span>";
+        ul.appendChild(li);
+        return;
+      }
+      files.forEach(function(f) {
+        const li = document.createElement("li");
+        li.className = "file-item";
+        li.innerHTML = "<span>" + f.name + "</span><span class='status-chip chip-ready'>Saved</span>";
+        ul.appendChild(li);
+      });
+    }
+
+    function refreshStatus() {
+      const p = getSelectedPeriod();
+      appendLog("Refreshing status for " + p.folderName + "...");
+      if (typeof google !== "undefined" && google.script && google.script.run) {
+        google.script.run
+          .withSuccessHandler(function(res) {
+            if (res && res.success) {
+              renderFilesList(res.meta.folderName, res.files);
+              appendLog("Loaded " + res.files.length + " file(s) in " + res.meta.folderName + ".");
+            }
+          })
+          .withFailureHandler(function(err) {
+            appendLog("Error loading status: " + err);
+          })
+          .getMonthStatus(p.month, p.year);
+      } else {
+        const defaultFiles = [
+          { name: "Sunseeker Invoice - Elivaas - " + document.getElementById("select-month").selectedOptions[0].text + " " + p.year + ".pdf" },
+          { name: "Sunseeker Invoice - UBL (2B)." + p.folderName + " - Invoice.pdf" },
+          { name: "Sunseeker Invoice - Zohouse " + p.folderName + " - Invoice.pdf" }
+        ];
+        renderFilesList(p.folderName, defaultFiles);
+        appendLog("Status updated for " + p.folderName + " (preview mode).");
+      }
+    }
+
+    function triggerWorkflow(actionName) {
+      const p = getSelectedPeriod();
+      appendLog("Running " + actionName + " for " + p.folderName + " (testMode=" + p.isTest + ")...");
+      if (typeof google !== "undefined" && google.script && google.script.run) {
+        const runner = google.script.run
+          .withSuccessHandler(function(res) {
+            appendLog(actionName + " result: " + JSON.stringify(res));
+            refreshStatus();
+          })
+          .withFailureHandler(function(err) {
+            appendLog(actionName + " error: " + err);
+          });
+        if (actionName === "scanGstBills") {
+          runner[actionName](p.month, p.year);
+        } else {
+          runner[actionName](p.month, p.year, p.isTest);
+        }
+      } else {
+        appendLog("Simulated " + actionName + " for " + p.folderName + " (testMode=" + p.isTest + ") -> Success.");
+      }
+    }
+
+    function installTrigger() {
+      appendLog("Verifying daily 9:00 AM IST autonomous cloud trigger...");
+      if (typeof google !== "undefined" && google.script && google.script.run) {
+        google.script.run
+          .withSuccessHandler(function(res) {
+            appendLog(res.message || "Daily trigger active.");
+            document.getElementById("trigger-badge").textContent = "Cloud Schedule: Active (9:00 AM IST)";
+          })
+          .withFailureHandler(function(err) {
+            appendLog("Trigger error: " + err);
+          })
+          .installDailyTriggers();
+      } else {
+        document.getElementById("trigger-badge").textContent = "Cloud Schedule: Active (9:00 AM IST)";
+        appendLog("Daily 9:00 AM IST trigger verified.");
+      }
+    }
+  </script>
+</body>
+</html>
