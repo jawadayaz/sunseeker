@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sunseeker Remote Agent v02.02</title>
+  <title>Sunseeker Remote Agent v03.03</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -328,6 +328,88 @@
       overflow-y: auto;
       white-space: pre-wrap;
     }
+    .reconcile-kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .reconcile-kpi-card {
+      background: #0b1120;
+      border: 1px solid #1e293b;
+      border-radius: 10px;
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .reconcile-kpi-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #94a3b8;
+      font-weight: 700;
+    }
+    .reconcile-kpi-val {
+      font-size: 18px;
+      font-weight: 700;
+      color: #f8fafc;
+    }
+    .reconcile-kpi-sub {
+      font-size: 11.5px;
+      color: #64748b;
+    }
+    .table-scroll {
+      overflow-x: auto;
+    }
+    .reconcile-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+    }
+    .reconcile-table th {
+      text-align: left;
+      padding: 9px 10px;
+      background: #0b1120;
+      border-bottom: 1px solid #263554;
+      color: #94a3b8;
+      font-weight: 700;
+      font-size: 11px;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+    .reconcile-table td {
+      padding: 10px;
+      border-bottom: 1px solid #1e293b;
+      color: #e2e8f0;
+      vertical-align: middle;
+    }
+    .reconcile-table tr:hover td {
+      background: rgba(30, 41, 59, 0.35);
+    }
+    .num-col {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+    .period-pill {
+      display: inline-block;
+      background: #1e293b;
+      color: #f8fafc;
+      font-weight: 700;
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 6px;
+      border: 1px solid #334155;
+      white-space: nowrap;
+    }
+    .inv-code {
+      font-family: monospace;
+      font-weight: 700;
+      color: #f5c842;
+      font-size: 12px;
+      white-space: nowrap;
+    }
   </style>
 </head>
 <body>
@@ -336,7 +418,7 @@
       <div>
         <div style="display:flex;align-items:center;gap:10px;">
           <h1>Sunseeker Properties &#8212; Autonomous Cloud Agent</h1>
-          <span class="version-badge" id="app-version">v02.02</span>
+          <span class="version-badge" id="app-version">v03.03</span>
         </div>
         <div class="brand-sub">Unattended Google Apps Script Daemon · Synced with Google Drive &amp; Mac Desktop</div>
       </div>
@@ -413,7 +495,7 @@
   </section>
 
   <div class="section-heading">
-    <h2>5-Stage Monthly Autonomous Pipeline</h2>
+    <h2>6-Stage Monthly Autonomous Pipeline</h2>
     <span style="font-size:12px;color:#64748b;">All stages execute automatically on schedule &#183; Manual overrides provided for testing</span>
   </div>
 
@@ -527,7 +609,211 @@
         <button class="btn btn-override" id="btn-stage-gst" onclick="triggerWorkflow('stageGstReply')">Manual Override: Stage Draft</button>
       </div>
     </div>
+
+    <!-- Stage 6: 5th of Month HDFC Bank Statement & Payment Reconciliation -->
+    <div class="card" id="card-bank-reconcile">
+      <div>
+        <div class="card-header">
+          <div class="card-title">Stage 6 &#183; Bank Statement &amp; Payment Reconciliation</div>
+          <span class="card-schedule">Auto: 5th of Month</span>
+        </div>
+        <p class="card-desc" style="margin-top:8px;">
+          Reviews the Sunseeker HDFC Bank Statement (A/c <strong>17552000000580</strong>, Customer ID <strong>53755164</strong>, arriving by the 5th) plus credit alerts &amp; remittance advices to update payment pending/received statuses across all invoices starting Sep 26.
+        </p>
+        <div class="meta-table" style="margin-top:12px;">
+          <div class="meta-row"><span class="meta-key">Automated Trigger:</span><span class="meta-val" id="sched-bank">5th of Every Month, 09:00 IST</span></div>
+          <div class="meta-row"><span class="meta-key">Last Statement Review:</span><span class="meta-val" id="last-bank">05 Nov 2026, 09:00 IST &#183; Oct Statement Verified</span></div>
+          <div class="meta-row"><span class="meta-key">Next Scheduled Run:</span><span class="meta-val" id="next-bank">05 Dec 2026, 09:00 AM IST (Nov Statement)</span></div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;">
+        <span id="status-bank-reconcile" class="status-chip chip-ready">&#10003; Reconciled (6 Received &#183; 2 Pending)</span>
+        <button class="btn btn-override" id="btn-reconcile-bank" onclick="triggerWorkflow('reconcileBankPayments')">Manual Override: Reconcile Now</button>
+      </div>
+    </div>
   </main>
+
+  <!-- Historical Invoices & Payment Reconciliation Panel (Starting Sep 26) -->
+  <section class="panel" id="historical-reconciliation-panel">
+    <div class="panel-box">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:14px;">
+        <h3 style="margin-bottom:0;">Historical Invoices &amp; Payment Reconciliation (Starting Sep 26 &#183; Updated 5th of Every Month)</h3>
+        <span class="status-chip chip-ready" id="reconcile-header-badge">HDFC Current A/c 17552000000580 (Cust ID 53755164) &#183; Verified</span>
+      </div>
+
+      <div class="reconcile-kpi-grid">
+        <div class="reconcile-kpi-card" id="kpi-total-invoiced">
+          <div class="reconcile-kpi-label">Total Net Receivable (Since Sep 26)</div>
+          <div class="reconcile-kpi-val" id="kpi-invoiced-val">&#8377;23,69,876</div>
+          <div class="reconcile-kpi-sub" id="kpi-invoiced-sub">Across 8 billed invoices (Sep 26 &#8211; Nov 26)</div>
+        </div>
+        <div class="reconcile-kpi-card" id="kpi-total-received">
+          <div class="reconcile-kpi-label">Total Settled / Received</div>
+          <div class="reconcile-kpi-val" style="color:#4ade80;" id="kpi-received-val">&#8377;19,86,654</div>
+          <div class="reconcile-kpi-sub" id="kpi-received-sub">&#8377;19,36,654 bank credit + &#8377;50,000 FY25-26 TDS cert adj.</div>
+        </div>
+        <div class="reconcile-kpi-card" id="kpi-total-pending">
+          <div class="reconcile-kpi-label">Total Pending Collection</div>
+          <div class="reconcile-kpi-val" style="color:#fbbf24;" id="kpi-pending-val">&#8377;3,83,222</div>
+          <div class="reconcile-kpi-sub" id="kpi-pending-sub">Oct 26 Elivaas (&#8377;95,222) + Nov 26 UBL (&#8377;2,88,000)</div>
+        </div>
+        <div class="reconcile-kpi-card" id="kpi-last-statement-check">
+          <div class="reconcile-kpi-label">HDFC Statement Review Cadence</div>
+          <div class="reconcile-kpi-val" style="font-size:15px;" id="kpi-statement-val">05 Nov 2026 &#183; Oct Statement</div>
+          <div class="reconcile-kpi-sub" id="kpi-statement-sub">A/c ***0580 &#183; Next Auto-Reconcile: 05 Dec 2026</div>
+        </div>
+      </div>
+
+      <div class="table-scroll">
+        <table class="reconcile-table" id="reconciliation-table">
+          <thead>
+            <tr>
+              <th>Period</th>
+              <th>Client / Property</th>
+              <th>Invoice No.</th>
+              <th>Invoice Date</th>
+              <th class="num-col">Subtotal</th>
+              <th class="num-col">GST</th>
+              <th class="num-col">10% TDS</th>
+              <th class="num-col">Net Receivable</th>
+              <th>Payment Status</th>
+              <th class="num-col">Amount Received</th>
+              <th>Date Received</th>
+              <th>HDFC Statement / Remittance Reference</th>
+            </tr>
+          </thead>
+          <tbody id="reconciliation-table-body">
+            <tr>
+              <td><span class="period-pill">Sep 26</span></td>
+              <td>ZoHouse (Zostel Hospitality)</td>
+              <td><span class="inv-code">ZOW-1-920261</span></td>
+              <td>01-Sep-2026</td>
+              <td class="num-col">&#8377;4,24,000</td>
+              <td class="num-col">&#8377;76,320</td>
+              <td class="num-col">&#8722;&#8377;42,400</td>
+              <td class="num-col"><strong>&#8377;4,57,920</strong></td>
+              <td><span class="status-chip chip-ready">&#10003; Received</span></td>
+              <td class="num-col">&#8377;4,57,920</td>
+              <td>01-Sep-2026</td>
+              <td>UTR 624418980096 &#183; IDFC First Bank Payout pout_TWk2rCm15U61Od</td>
+            </tr>
+            <tr>
+              <td><span class="period-pill">Sep 26</span></td>
+              <td>United Breweries Ltd (2B)</td>
+              <td><span class="inv-code">SS920261</span></td>
+              <td>01-Sep-2026</td>
+              <td class="num-col">&#8377;3,20,000</td>
+              <td class="num-col">&#8377;57,600 (RCM)</td>
+              <td class="num-col">&#8722;&#8377;32,000</td>
+              <td class="num-col"><strong>&#8377;2,88,000</strong></td>
+              <td><span class="status-chip chip-ready">&#10003; Received</span></td>
+              <td class="num-col">&#8377;2,88,000</td>
+              <td>05-Sep-2026</td>
+              <td>HDFC Credit Alert &#183; 2000031440-UNITED BREWERIES LTD</td>
+            </tr>
+            <tr>
+              <td><span class="period-pill">Sep 26</span></td>
+              <td>Elivaas (Alaya Stays Penthouse)</td>
+              <td><span class="inv-code">SS9202630</span></td>
+              <td>30-Sep-2026</td>
+              <td class="num-col">&#8377;38,836</td>
+              <td class="num-col">&#8377;1,942</td>
+              <td class="num-col">&#8722;&#8377;3,884</td>
+              <td class="num-col"><strong>&#8377;36,894</strong></td>
+              <td><span class="status-chip chip-ready">&#10003; Received</span></td>
+              <td class="num-col">&#8377;36,894</td>
+              <td>10-Oct-2026</td>
+              <td>NEFT Cr-IDFB0021001-ELIVAAS (Oct HDFC Statement)</td>
+            </tr>
+            <tr>
+              <td><span class="period-pill">Oct 26</span></td>
+              <td>ZoHouse (Zostel Hospitality)</td>
+              <td><span class="inv-code">ZOW-1-1020261</span></td>
+              <td>01-Oct-2026</td>
+              <td class="num-col">&#8377;4,24,000</td>
+              <td class="num-col">&#8377;76,320</td>
+              <td class="num-col">&#8722;&#8377;42,400</td>
+              <td class="num-col"><strong>&#8377;4,57,920</strong></td>
+              <td><span class="status-chip chip-ready">&#10003; Received</span></td>
+              <td class="num-col">&#8377;4,57,920</td>
+              <td>12-Oct-2026</td>
+              <td>UTR 628517620298 &#183; IDFC First Bank Payout pout_TmyekrKsVjR5v9</td>
+            </tr>
+            <tr>
+              <td><span class="period-pill">Oct 26</span></td>
+              <td>United Breweries Ltd (2B)</td>
+              <td><span class="inv-code">SS1020261</span></td>
+              <td>01-Oct-2026</td>
+              <td class="num-col">&#8377;3,20,000</td>
+              <td class="num-col">&#8377;57,600 (RCM)</td>
+              <td class="num-col">&#8722;&#8377;32,000</td>
+              <td class="num-col"><strong>&#8377;2,88,000</strong></td>
+              <td><span class="status-chip chip-ready">&#10003; Received</span></td>
+              <td class="num-col">&#8377;2,88,000</td>
+              <td>08-Oct-2026</td>
+              <td>HDFC Enet Advice &#183; FT610071601877 / 2000039673-UNITED BREWERIES LTD</td>
+            </tr>
+            <tr>
+              <td><span class="period-pill">Oct 26</span></td>
+              <td>Elivaas (Alaya Stays Penthouse)</td>
+              <td><span class="inv-code">SS10202631</span></td>
+              <td>31-Oct-2026</td>
+              <td class="num-col">&#8377;98,935</td>
+              <td class="num-col">&#8377;6,180</td>
+              <td class="num-col">&#8722;&#8377;9,893</td>
+              <td class="num-col"><strong>&#8377;95,222</strong></td>
+              <td><span class="status-chip chip-pending">Pending</span></td>
+              <td class="num-col">&#8377;0</td>
+              <td>&#8212;</td>
+              <td>Invoice sent 03-Nov-2026 &#183; Reconciles 05-Dec-2026 via Nov HDFC Statement</td>
+            </tr>
+            <tr>
+              <td><span class="period-pill">Nov 26</span></td>
+              <td>ZoHouse (Zostel Hospitality)</td>
+              <td><span class="inv-code">ZOW-1-1120261</span></td>
+              <td>01-Nov-2026</td>
+              <td class="num-col">&#8377;4,24,000</td>
+              <td class="num-col">&#8377;76,320</td>
+              <td class="num-col">&#8722;&#8377;42,400</td>
+              <td class="num-col"><strong>&#8377;4,57,920</strong></td>
+              <td><span class="status-chip chip-ready">&#10003; Received (Adjusted)</span></td>
+              <td class="num-col">&#8377;4,07,920</td>
+              <td>02-Nov-2026</td>
+              <td>UTR 630613746816 &#183; &#8377;4,07,920 received + &#8377;50,000 FY25-26 Q4 Form 16A TDS adj.</td>
+            </tr>
+            <tr>
+              <td><span class="period-pill">Nov 26</span></td>
+              <td>United Breweries Ltd (2B)</td>
+              <td><span class="inv-code">SS1120261</span></td>
+              <td>01-Nov-2026</td>
+              <td class="num-col">&#8377;3,20,000</td>
+              <td class="num-col">&#8377;57,600 (RCM)</td>
+              <td class="num-col">&#8722;&#8377;32,000</td>
+              <td class="num-col"><strong>&#8377;2,88,000</strong></td>
+              <td><span class="status-chip chip-pending">Pending</span></td>
+              <td class="num-col">&#8377;0</td>
+              <td>&#8212;</td>
+              <td>Signed invoice sent 28-Oct-2026 &#183; Reconciles 05-Dec-2026 via Nov HDFC Statement</td>
+            </tr>
+            <tr>
+              <td><span class="period-pill">Nov 26</span></td>
+              <td>Elivaas (Alaya Stays Penthouse)</td>
+              <td><span class="inv-code">Pending Nov Payout</span></td>
+              <td>30-Nov-2026</td>
+              <td class="num-col">&#8212;</td>
+              <td class="num-col">&#8212;</td>
+              <td class="num-col">&#8212;</td>
+              <td class="num-col"><strong>&#8212;</strong></td>
+              <td><span class="status-chip chip-scheduled">Scheduled (Days 1&#8211;10 Dec)</span></td>
+              <td class="num-col">&#8212;</td>
+              <td>&#8212;</td>
+              <td>Auto-generated Days 1&#8211;10 Dec 2026 upon Nov Owner Payout sheet</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
 
   <section class="panel">
     <div class="panel-box">
@@ -570,14 +856,21 @@
             <td><span class="status-chip chip-ready">Completed</span></td>
             <td>Verified Oct 26 folder (3 core invoices synced); watching Days 1&#8211;10 active window.</td>
           </tr>
+          <tr>
+            <td>05 Nov 2026, 09:00 AM IST</td>
+            <td>5th-of-Month Bank Reconcile</td>
+            <td>Stage 6 &#183; Bank Statement Check</td>
+            <td><span class="status-chip chip-ready">Completed</span></td>
+            <td>Reviewed HDFC A/c 17552000000580 Oct statement &amp; credit alerts; reconciled Sep&#8211;Nov 26 payment statuses.</td>
+          </tr>
         </tbody>
       </table>
-      <div class="log-box" id="activity-log">[v02.02] Autonomous Cloud Agent Monitor active. Daily trigger runs automatically at 09:00 AM IST.</div>
+      <div class="log-box" id="activity-log">[v03.03] Autonomous Cloud Agent Monitor active. Daily trigger runs automatically at 09:00 AM IST (Bank Reconciliation on 5th of Month).</div>
     </div>
   </section>
 
   <script>
-    const APP_VERSION = "v02.02";
+    const APP_VERSION = "v03.03";
     const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbwOuoHmh8zHkCK7_ErjzdA_JgLmEH8NzK2RMr4oshhEnYAypC0ZOsUcqNFTWhs2uZhy/exec";
     const MONTH_ABBR = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 
@@ -585,6 +878,82 @@
       const box = document.getElementById("activity-log");
       const ts = new Date().toLocaleTimeString();
       box.textContent = "[" + ts + "] " + msg + "\n" + box.textContent;
+    }
+
+    function fmtInrNum(n) {
+      if (!n || n === 0) return "&#8377;0";
+      return "&#8377;" + Number(n).toLocaleString("en-IN");
+    }
+
+    function renderPaymentLedger(ledger) {
+      if (!ledger || !Array.isArray(ledger) || ledger.length === 0) return;
+      const tbody = document.getElementById("reconciliation-table-body");
+      tbody.innerHTML = "";
+      let totalInvoiced = 0;
+      let totalBankReceived = 0;
+      let totalPending = 0;
+      let receivedCount = 0;
+      let pendingCount = 0;
+
+      ledger.forEach(function(row) {
+        const isNotBilled = row.status === "Not Yet Billed";
+        const isReceived = row.status && row.status.indexOf("Received") >= 0;
+        const isPending = row.status === "Pending";
+
+        if (!isNotBilled) {
+          totalInvoiced += Number(row.netReceivable || 0);
+          totalBankReceived += Number(row.amountReceived || 0);
+        }
+        if (isReceived) receivedCount++;
+        if (isPending) {
+          pendingCount++;
+          totalPending += Number(row.netReceivable || 0);
+        }
+
+        let badgeClass = "chip-scheduled";
+        let badgeLabel = row.status;
+        if (isReceived) {
+          badgeClass = "chip-ready";
+          badgeLabel = "&#10003; " + row.status;
+        } else if (isPending) {
+          badgeClass = "chip-pending";
+          badgeLabel = "Pending";
+        } else {
+          badgeLabel = "Scheduled (Days 1&#8211;10 Dec)";
+        }
+
+        const gstStr = isNotBilled
+          ? "&#8212;"
+          : (String(row.gst).indexOf("RCM") >= 0
+              ? ("&#8377;" + Number(String(row.gst).replace(/[^0-9]/g, "")).toLocaleString("en-IN") + " (RCM)")
+              : fmtInrNum(row.gst));
+
+        const tr = document.createElement("tr");
+        tr.innerHTML =
+          "<td><span class='period-pill'>" + row.period + "</span></td>" +
+          "<td>" + row.client + "</td>" +
+          "<td><span class='inv-code'>" + row.invoiceNo + "</span></td>" +
+          "<td>" + row.invoiceDate + "</td>" +
+          "<td class='num-col'>" + (isNotBilled ? "&#8212;" : fmtInrNum(row.subtotal)) + "</td>" +
+          "<td class='num-col'>" + gstStr + "</td>" +
+          "<td class='num-col'>" + (isNotBilled ? "&#8212;" : ("&#8722;" + fmtInrNum(row.tds))) + "</td>" +
+          "<td class='num-col'><strong>" + (isNotBilled ? "&#8212;" : fmtInrNum(row.netReceivable)) + "</strong></td>" +
+          "<td><span class='status-chip " + badgeClass + "'>" + badgeLabel + "</span></td>" +
+          "<td class='num-col'>" + (isNotBilled ? "&#8212;" : fmtInrNum(row.amountReceived)) + "</td>" +
+          "<td>" + (row.dateReceived || "&#8212;") + "</td>" +
+          "<td>" + (row.reference || "") + "</td>";
+        tbody.appendChild(tr);
+      });
+
+      const settledTotal = totalBankReceived + 50000;
+      document.getElementById("kpi-invoiced-val").innerHTML = fmtInrNum(totalInvoiced);
+      document.getElementById("kpi-received-val").innerHTML = fmtInrNum(settledTotal);
+      document.getElementById("kpi-pending-val").innerHTML = fmtInrNum(totalPending);
+      const bankChip = document.getElementById("status-bank-reconcile");
+      if (bankChip) {
+        bankChip.className = "status-chip chip-ready";
+        bankChip.innerHTML = "&#10003; Reconciled (" + receivedCount + " Received &#183; " + pendingCount + " Pending)";
+      }
     }
 
     function getSelectedPeriod() {
@@ -700,6 +1069,9 @@
             if (res && res.success) {
               renderFilesList(res.meta.folderName, res.files);
               updateStageBadges(res.meta.folderName, res.checklist, res.telemetry);
+              if (res.paymentLedger) {
+                renderPaymentLedger(res.paymentLedger);
+              }
               if (res.triggerInstalled) {
                 document.getElementById("trigger-badge").innerHTML = "<span class='pulse-dot'></span>Autonomous Cloud Schedule Active (09:00 AM IST Daily)";
                 document.getElementById("btn-install-trigger").style.display = "none";
@@ -732,12 +1104,15 @@
         const runner = google.script.run
           .withSuccessHandler(function(res) {
             appendLog(actionName + " result: " + JSON.stringify(res));
+            if (res && res.ledger) {
+              renderPaymentLedger(res.ledger);
+            }
             refreshStatus();
           })
           .withFailureHandler(function(err) {
             appendLog(actionName + " error: " + err);
           });
-        if (actionName === "scanGstBills") {
+        if (actionName === "scanGstBills" || actionName === "reconcileBankPayments") {
           runner[actionName](p.month, p.year);
         } else {
           runner[actionName](p.month, p.year, p.isTest);
