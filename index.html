@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sunseeker Remote Agent v01.00</title>
+  <title>Sunseeker Remote Agent v01.01</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -206,11 +206,11 @@
   <header>
     <div class="brand">
       <h1>Sunseeker Properties &#8212; Unified Remote Agent</h1>
-      <span class="version-badge" id="app-version">v01.00</span>
+      <span class="version-badge" id="app-version">v01.01</span>
     </div>
     <div class="control-group">
-      <span id="trigger-badge" class="status-chip chip-ready">Cloud Schedule: 9:00 AM IST Daily</span>
-      <button class="btn btn-slate" id="btn-install-trigger" onclick="installTrigger()">Verify / Install Cloud Trigger</button>
+      <span id="trigger-badge" class="status-chip chip-ready">&#10003; Cloud Schedule Active (9:00 AM IST Daily)</span>
+      <button class="btn btn-slate" id="btn-install-trigger" style="display:none;" onclick="installTrigger()">Verify / Install Cloud Trigger</button>
     </div>
   </header>
 
@@ -360,7 +360,8 @@
   </section>
 
   <script>
-    const APP_VERSION = "v01.00";
+    const APP_VERSION = "v01.01";
+    const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbwOuoHmh8zHkCK7_ErjzdA_JgLmEH8NzK2RMr4oshhEnYAypC0ZOsUcqNFTWhs2uZhy/exec";
     const MONTH_ABBR = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 
     function appendLog(msg) {
@@ -404,6 +405,12 @@
           .withSuccessHandler(function(res) {
             if (res && res.success) {
               renderFilesList(res.meta.folderName, res.files);
+              if (res.triggerInstalled) {
+                document.getElementById("trigger-badge").innerHTML = "&#10003; Cloud Schedule Active (9:00 AM IST Daily)";
+                document.getElementById("btn-install-trigger").style.display = "none";
+              } else {
+                document.getElementById("btn-install-trigger").style.display = "inline-block";
+              }
               appendLog("Loaded " + res.files.length + " file(s) in " + res.meta.folderName + ".");
             }
           })
@@ -450,17 +457,23 @@
         google.script.run
           .withSuccessHandler(function(res) {
             appendLog(res.message || "Daily trigger active.");
-            document.getElementById("trigger-badge").textContent = "Cloud Schedule: Active (9:00 AM IST)";
+            document.getElementById("trigger-badge").innerHTML = "&#10003; Cloud Schedule Active (9:00 AM IST Daily)";
+            document.getElementById("btn-install-trigger").style.display = "none";
           })
           .withFailureHandler(function(err) {
             appendLog("Trigger error: " + err);
           })
           .installDailyTriggers();
       } else {
-        document.getElementById("trigger-badge").textContent = "Cloud Schedule: Active (9:00 AM IST)";
+        document.getElementById("trigger-badge").innerHTML = "&#10003; Cloud Schedule Active (9:00 AM IST Daily)";
+        document.getElementById("btn-install-trigger").style.display = "none";
         appendLog("Daily 9:00 AM IST trigger verified.");
       }
     }
+
+    window.addEventListener("DOMContentLoaded", function() {
+      refreshStatus();
+    });
   </script>
 </body>
 </html>
