@@ -3,9 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sunseeker Remote Agent v03.03</title>
+  <title>Sunseeker Remote Agent v03.04</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      max-width: 100%;
+      overflow-x: hidden;
+    }
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       background: #0b1120;
@@ -16,7 +20,7 @@
     header {
       background: #111827;
       border-bottom: 1px solid #1e293b;
-      padding: 16px 24px;
+      padding: 16px 20px;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -27,6 +31,7 @@
       display: flex;
       align-items: center;
       gap: 12px;
+      min-width: 0;
     }
     .brand h1 {
       font-size: 19px;
@@ -47,6 +52,7 @@
       font-size: 12px;
       padding: 3px 10px;
       border-radius: 999px;
+      white-space: nowrap;
     }
     .pulse-dot {
       display: inline-block;
@@ -56,23 +62,25 @@
       background: #4ade80;
       box-shadow: 0 0 8px #4ade80;
       margin-right: 6px;
+      flex-shrink: 0;
     }
     .telemetry-strip {
-      max-width: 1160px;
-      margin: 20px auto 0;
-      padding: 0 20px;
+      max-width: 1240px;
+      margin: 18px auto 0;
+      padding: 0 16px;
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 14px;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
     }
     .telemetry-card {
       background: #131c31;
       border: 1px solid #263554;
       border-radius: 12px;
-      padding: 16px 18px;
+      padding: 14px 16px;
       display: flex;
       flex-direction: column;
       gap: 6px;
+      min-width: 0;
     }
     .telemetry-label {
       font-size: 11px;
@@ -85,6 +93,7 @@
       font-size: 15px;
       font-weight: 700;
       color: #f8fafc;
+      font-variant-numeric: tabular-nums;
     }
     .telemetry-sub {
       font-size: 12px;
@@ -107,9 +116,9 @@
       transition: width 0.3s ease;
     }
     .controls-bar {
-      max-width: 1160px;
-      margin: 16px auto;
-      padding: 12px 18px;
+      max-width: 1240px;
+      margin: 14px auto 0;
+      padding: 12px 16px;
       background: #111827;
       border: 1px solid #1e293b;
       border-radius: 12px;
@@ -117,13 +126,14 @@
       align-items: center;
       justify-content: space-between;
       flex-wrap: wrap;
-      gap: 14px;
+      gap: 12px;
     }
     .control-group {
       display: flex;
       align-items: center;
       gap: 10px;
       flex-wrap: wrap;
+      min-width: 0;
     }
     label {
       font-size: 12px;
@@ -135,8 +145,9 @@
       color: #f8fafc;
       border: 1px solid #334155;
       border-radius: 8px;
-      padding: 7px 12px;
-      font-size: 13px;
+      padding: 7px 11px;
+      font-size: 12.5px;
+      min-height: 36px;
     }
     .toggle-pill {
       display: inline-flex;
@@ -150,6 +161,7 @@
       font-size: 12px;
       font-weight: 600;
       cursor: pointer;
+      min-height: 36px;
     }
     .btn {
       background: #1e293b;
@@ -161,28 +173,32 @@
       font-weight: 600;
       cursor: pointer;
       transition: all 0.15s;
+      min-height: 36px;
     }
     .btn:hover { background: #334155; color: #ffffff; }
     .btn-override {
       background: transparent;
-      color: #94a3b8;
-      border: 1px dashed #334155;
-      padding: 5px 10px;
+      color: #cbd5e1;
+      border: 1px dashed #475569;
+      padding: 7px 11px;
       font-size: 11px;
       border-radius: 6px;
+      min-height: 36px;
     }
     .btn-override:hover {
       background: #1e293b;
       color: #f8fafc;
-      border-color: #475569;
+      border-color: #94a3b8;
     }
     .section-heading {
-      max-width: 1160px;
-      margin: 22px auto 12px;
-      padding: 0 20px;
+      max-width: 1240px;
+      margin: 20px auto 12px;
+      padding: 0 16px;
       display: flex;
       align-items: center;
       justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
     }
     .section-heading h2 {
       font-size: 14px;
@@ -191,23 +207,28 @@
       color: #94a3b8;
       font-weight: 700;
     }
+    .section-heading-sub {
+      font-size: 12px;
+      color: #94a3b8;
+    }
     .main-grid {
-      max-width: 1160px;
+      max-width: 1240px;
       margin: 0 auto;
-      padding: 0 20px;
+      padding: 0 16px;
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 14px;
     }
     .card {
       background: #131c31;
       border: 1px solid #263554;
       border-radius: 12px;
-      padding: 18px;
+      padding: 16px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       gap: 14px;
+      min-width: 0;
     }
     .card-header {
       display: flex;
@@ -216,7 +237,7 @@
       gap: 10px;
     }
     .card-title {
-      font-size: 15px;
+      font-size: 14.5px;
       font-weight: 700;
       color: #f8fafc;
     }
@@ -229,6 +250,7 @@
       color: #38bdf8;
       border: 1px solid #0369a1;
       white-space: nowrap;
+      flex-shrink: 0;
     }
     .card-desc {
       font-size: 12.5px;
@@ -249,30 +271,32 @@
       justify-content: space-between;
       gap: 8px;
     }
-    .meta-key { color: #64748b; font-weight: 600; }
-    .meta-val { color: #e2e8f0; font-weight: 600; text-align: right; }
+    .meta-key { color: #94a3b8; font-weight: 600; }
+    .meta-val { color: #e2e8f0; font-weight: 600; text-align: right; font-variant-numeric: tabular-nums; }
     .status-chip {
       display: inline-flex;
       align-items: center;
-      font-size: 11.5px;
+      font-size: 11px;
       font-weight: 700;
-      padding: 4px 10px;
+      padding: 3px 8px;
       border-radius: 999px;
+      white-space: nowrap;
     }
     .chip-ready { background: rgba(22, 163, 74, 0.18); color: #4ade80; border: 1px solid #16a34a; }
     .chip-watching { background: rgba(14, 165, 233, 0.18); color: #38bdf8; border: 1px solid #0284c7; }
-    .chip-scheduled { background: rgba(148, 163, 184, 0.14); color: #cbd5e1; border: 1px solid #475569; }
-    .chip-pending { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid #d97706; }
+    .chip-scheduled { background: rgba(148, 163, 184, 0.16); color: #e2e8f0; border: 1px solid #94a3b8; }
+    .chip-pending { background: rgba(245, 158, 11, 0.18); color: #fbbf24; border: 1px solid #d97706; }
     .panel {
-      max-width: 1160px;
-      margin: 18px auto 0;
-      padding: 0 20px;
+      max-width: 1240px;
+      margin: 16px auto 0;
+      padding: 0 16px;
     }
     .panel-box {
       background: #131c31;
       border: 1px solid #263554;
       border-radius: 12px;
-      padding: 18px 20px;
+      padding: 16px;
+      min-width: 0;
     }
     .panel-box h3 {
       font-size: 14px;
@@ -294,19 +318,21 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
       font-size: 13px;
     }
     .history-table {
       width: 100%;
       border-collapse: collapse;
-      font-size: 12.5px;
+      font-size: 12px;
       margin-bottom: 12px;
     }
     .history-table th {
       text-align: left;
       padding: 8px 10px;
       border-bottom: 1px solid #1e293b;
-      color: #64748b;
+      color: #94a3b8;
       font-weight: 700;
       font-size: 11px;
       text-transform: uppercase;
@@ -315,6 +341,7 @@
       padding: 9px 10px;
       border-bottom: 1px solid #1e293b;
       color: #cbd5e1;
+      font-variant-numeric: tabular-nums;
     }
     .log-box {
       background: #070b14;
@@ -330,9 +357,9 @@
     }
     .reconcile-kpi-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 12px;
-      margin-bottom: 16px;
+      margin-bottom: 14px;
     }
     .reconcile-kpi-card {
       background: #0b1120;
@@ -342,6 +369,7 @@
       display: flex;
       flex-direction: column;
       gap: 4px;
+      min-width: 0;
     }
     .reconcile-kpi-label {
       font-size: 11px;
@@ -354,35 +382,81 @@
       font-size: 18px;
       font-weight: 700;
       color: #f8fafc;
+      font-variant-numeric: tabular-nums;
     }
     .reconcile-kpi-sub {
       font-size: 11.5px;
-      color: #64748b;
+      color: #94a3b8;
+    }
+    .reconcile-filter-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+      background: #0b1120;
+      border: 1px solid #1e293b;
+      border-radius: 10px;
+      padding: 10px 12px;
+      margin-bottom: 12px;
+    }
+    .filter-controls-left {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .filter-count-badge {
+      font-size: 12px;
+      font-weight: 700;
+      color: #cbd5e1;
+      background: #131c31;
+      border: 1px solid #263554;
+      padding: 5px 10px;
+      border-radius: 999px;
+      font-variant-numeric: tabular-nums;
+    }
+    .filter-group {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+    }
+    .mobile-scroll-hint {
+      display: none;
     }
     .table-scroll {
+      width: 100%;
       overflow-x: auto;
     }
     .reconcile-table {
       width: 100%;
       border-collapse: collapse;
-      font-size: 12px;
+      font-size: 11px;
+      table-layout: auto;
     }
     .reconcile-table th {
       text-align: left;
-      padding: 9px 10px;
+      padding: 6px 4px;
       background: #0b1120;
       border-bottom: 1px solid #263554;
       color: #94a3b8;
       font-weight: 700;
-      font-size: 11px;
+      font-size: 10px;
       text-transform: uppercase;
-      white-space: nowrap;
+      letter-spacing: 0.03em;
+      line-height: 1.25;
+      vertical-align: bottom;
+    }
+    .reconcile-table th.num-col {
+      text-align: right;
     }
     .reconcile-table td {
-      padding: 10px;
+      padding: 6px 4px;
       border-bottom: 1px solid #1e293b;
       color: #e2e8f0;
       vertical-align: middle;
+      line-height: 1.3;
     }
     .reconcile-table tr:hover td {
       background: rgba(30, 41, 59, 0.35);
@@ -392,23 +466,166 @@
       font-variant-numeric: tabular-nums;
       white-space: nowrap;
     }
+    .date-col {
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+    .client-col {
+      max-width: 110px;
+      white-space: normal;
+      line-height: 1.25;
+    }
+    .status-col {
+      white-space: nowrap;
+      width: 152px;
+      max-width: 160px;
+    }
+    .status-col .status-chip {
+      white-space: nowrap !important;
+    }
+    .ref-col {
+      min-width: 200px;
+      max-width: 240px;
+      line-height: 1.3;
+      color: #cbd5e1;
+    }
+    .ref-text {
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      line-height: 1.35;
+      word-break: break-word;
+    }
     .period-pill {
       display: inline-block;
       background: #1e293b;
       color: #f8fafc;
       font-weight: 700;
-      font-size: 11px;
-      padding: 3px 8px;
-      border-radius: 6px;
+      font-size: 10.5px;
+      padding: 2px 6px;
+      border-radius: 5px;
       border: 1px solid #334155;
       white-space: nowrap;
+      font-variant-numeric: tabular-nums;
     }
     .inv-code {
       font-family: monospace;
       font-weight: 700;
       color: #f5c842;
-      font-size: 12px;
+      font-size: 11px;
       white-space: nowrap;
+    }
+
+    @media (max-width: 1024px) {
+      .telemetry-strip,
+      .reconcile-kpi-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      .main-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 768px) {
+      header {
+        padding: 14px 12px;
+      }
+      .brand h1 {
+        font-size: 16px;
+      }
+      .telemetry-strip,
+      .main-grid,
+      .reconcile-kpi-grid {
+        grid-template-columns: 1fr;
+        padding: 0 12px;
+      }
+      .controls-bar {
+        margin: 12px;
+        padding: 12px;
+      }
+      .panel,
+      .section-heading {
+        padding: 0 12px;
+      }
+      .panel-box {
+        padding: 12px;
+      }
+      .status-chip {
+        white-space: normal;
+        line-height: 1.3;
+      }
+      .toggle-pill {
+        white-space: normal;
+        line-height: 1.3;
+      }
+      .meta-row,
+      .card-header {
+        flex-wrap: wrap;
+      }
+      .table-scroll {
+        -webkit-mask-image: linear-gradient(to right, #000 88%, transparent 100%);
+        mask-image: linear-gradient(to right, #000 88%, transparent 100%);
+      }
+      .mobile-scroll-hint {
+        display: block;
+        font-size: 11px;
+        color: #94a3b8;
+        margin-bottom: 6px;
+        text-align: right;
+        font-weight: 600;
+        letter-spacing: 0.02em;
+      }
+      .reconcile-table th:first-child,
+      .reconcile-table td:first-child {
+        position: sticky;
+        left: 0;
+        z-index: 2;
+      }
+      .reconcile-table th:first-child {
+        background: #0b1120;
+      }
+      .reconcile-table td:first-child {
+        background: #131c31;
+        box-shadow: 2px 0 4px rgba(0, 0, 0, 0.4);
+      }
+      .reconcile-table tr:hover td:first-child {
+        background: #1e293b;
+      }
+      .reconcile-filter-bar {
+        padding: 10px;
+      }
+      .filter-controls-left {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+      }
+      .filter-group {
+        display: flex;
+        width: 100%;
+        gap: 8px;
+      }
+      .filter-group label {
+        min-width: 52px;
+        flex-shrink: 0;
+      }
+      .filter-group select {
+        flex: 1;
+        width: 100%;
+        min-width: 0;
+      }
+      #btn-reset-filters {
+        width: 100%;
+      }
+      .filter-count-badge {
+        width: 100%;
+        text-align: center;
+      }
+      .btn-override {
+        min-height: 36px;
+      }
     }
   </style>
 </head>
@@ -416,15 +633,15 @@
   <header>
     <div class="brand">
       <div>
-        <div style="display:flex;align-items:center;gap:10px;">
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
           <h1>Sunseeker Properties &#8212; Autonomous Cloud Agent</h1>
-          <span class="version-badge" id="app-version">v03.03</span>
+          <span class="version-badge" id="app-version">v03.04</span>
         </div>
-        <div class="brand-sub">Unattended Google Apps Script Daemon · Synced with Google Drive &amp; Mac Desktop</div>
+        <div class="brand-sub">Unattended Google Apps Script Daemon &#183; Synced with Google Drive &amp; Mac Desktop</div>
       </div>
     </div>
     <div class="control-group">
-      <span id="trigger-badge" class="status-chip chip-ready"><span class="pulse-dot"></span>Autonomous Cloud Schedule Active (09:00 AM IST Daily)</span>
+      <span id="trigger-badge" class="status-chip chip-ready"><span class="pulse-dot"></span>&#10003; Autonomous Cloud Schedule Active (09:00 AM IST Daily)</span>
       <button class="btn" id="btn-install-trigger" style="display:none;" onclick="installTrigger()">Verify / Install Cloud Trigger</button>
     </div>
   </header>
@@ -434,7 +651,7 @@
     <div class="telemetry-card" id="telemetry-heartbeat">
       <div class="telemetry-label">Cloud Daemon Status</div>
       <div class="telemetry-value"><span class="pulse-dot"></span>Running Autonomously</div>
-      <div class="telemetry-sub" id="heartbeat-sub">Wakes daily at 09:00 AM IST in Google Cloud (`runDailyAutomation`). Zero Mac/browser dependency.</div>
+      <div class="telemetry-sub" id="heartbeat-sub">Wakes daily at 09:00 AM IST in Google Cloud (<strong>runDailyAutomation</strong>). Zero Mac/browser dependency.</div>
     </div>
 
     <div class="telemetry-card" id="telemetry-last-run">
@@ -494,151 +711,12 @@
     </div>
   </section>
 
-  <div class="section-heading">
-    <h2>6-Stage Monthly Autonomous Pipeline</h2>
-    <span style="font-size:12px;color:#64748b;">All stages execute automatically on schedule &#183; Manual overrides provided for testing</span>
-  </div>
-
-  <main class="main-grid">
-    <!-- Stage 1: ZoHouse & UBL Rental Invoices -->
-    <div class="card" id="card-rent">
-      <div>
-        <div class="card-header">
-          <div class="card-title">Stage 1 &#183; ZoHouse &amp; UBL Rental Invoices</div>
-          <span class="card-schedule">Auto: 28th of Month</span>
-        </div>
-        <p class="card-desc" style="margin-top:8px;">
-          Automatically generates ZoHouse (&#8377;4,57,920) &amp; UBL (&#8377;2,88,000) PDFs into <strong>Sunseeker Invoices/&lt;Mmm YY&gt;</strong>, emails unsigned UBL to Sandeep GB for digital signature, and sends you a 1-tap approval email for ZoHouse.
-        </p>
-        <div class="meta-table" style="margin-top:12px;">
-          <div class="meta-row"><span class="meta-key">Automated Trigger:</span><span class="meta-val" id="sched-rent">28th of Preceding Month, 09:00 IST</span></div>
-          <div class="meta-row"><span class="meta-key">Last Automated Check:</span><span class="meta-val" id="last-rent">07 Nov 2026, 09:00 IST &#183; Verified</span></div>
-          <div class="meta-row"><span class="meta-key">Next Scheduled Run:</span><span class="meta-val" id="next-rent">28 Nov 2026, 09:00 AM IST (Dec 26)</span></div>
-        </div>
-      </div>
-      <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;">
-        <span id="status-rent" class="status-chip chip-ready">&#10003; Completed (Saved in Folder)</span>
-        <button class="btn btn-override" id="btn-run-rent" onclick="triggerWorkflow('runRentInvoices')">Manual Override: Run Now</button>
-      </div>
-    </div>
-
-    <!-- Stage 2: UBL Signed PDF Watcher -->
-    <div class="card" id="card-ubl-signed">
-      <div>
-        <div class="card-header">
-          <div class="card-title">Stage 2 &#183; Signed UBL Reply Watcher</div>
-          <span class="card-schedule">Auto: Days 28&#8211;5 Daily</span>
-        </div>
-        <p class="card-desc" style="margin-top:8px;">
-          Watches Gmail daily for Sandeep GB's reply with the digitally signed UBL PDF, automatically replaces the unsigned PDF in <strong>Sunseeker Invoices/&lt;Mmm YY&gt;</strong>, and sends you a 1-tap approval email for UBL.
-        </p>
-        <div class="meta-table" style="margin-top:12px;">
-          <div class="meta-row"><span class="meta-key">Automated Trigger:</span><span class="meta-val" id="sched-ubl">Daily 09:00 IST (Days 28&#8211;5 Window)</span></div>
-          <div class="meta-row"><span class="meta-key">Last Automated Check:</span><span class="meta-val" id="last-ubl">07 Nov 2026, 09:00 IST &#183; Verified</span></div>
-          <div class="meta-row"><span class="meta-key">Next Scheduled Run:</span><span class="meta-val" id="next-ubl">28 Nov 2026, 09:00 AM IST</span></div>
-        </div>
-      </div>
-      <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;">
-        <span id="status-ubl" class="status-chip chip-ready">&#10003; Completed (Signed PDF Saved)</span>
-        <button class="btn btn-override" id="btn-check-ubl" onclick="triggerWorkflow('checkSignedUbl')">Manual Override: Check Inbox</button>
-      </div>
-    </div>
-
-    <!-- Stage 3: End-of-Month GST Bill Scanner -->
-    <div class="card" id="card-gst-bills">
-      <div>
-        <div class="card-header">
-          <div class="card-title">Stage 3 &#183; Vendor GST Bill Scanner</div>
-          <span class="card-schedule">Auto: Last Day of Month</span>
-        </div>
-        <p class="card-desc" style="margin-top:8px;">
-          Automatically scans Gmail on the last day of each month for Sunseeker vendor bills with GST (ignoring D.M &amp; SONS, Airtel, and non-GST bills) and emails you a 1-tap <strong>Save All to Folder</strong> prompt.
-        </p>
-        <div class="meta-table" style="margin-top:12px;">
-          <div class="meta-row"><span class="meta-key">Automated Trigger:</span><span class="meta-val" id="sched-bills">Last Day of Month, 09:00 IST</span></div>
-          <div class="meta-row"><span class="meta-key">Last Automated Check:</span><span class="meta-val" id="last-bills">31 Oct 2026, 09:00 IST &#183; Scanned</span></div>
-          <div class="meta-row"><span class="meta-key">Next Scheduled Run:</span><span class="meta-val" id="next-bills">30 Nov 2026, 09:00 AM IST</span></div>
-        </div>
-      </div>
-      <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;">
-        <span id="status-bills" class="status-chip chip-scheduled">Scheduled &#183; 30 Nov 2026</span>
-        <button class="btn btn-override" id="btn-scan-bills" onclick="triggerWorkflow('scanGstBills')">Manual Override: Scan Now</button>
-      </div>
-    </div>
-
-    <!-- Stage 4: Alaya Stays -> Elivaas Invoice Generator -->
-    <div class="card" id="card-elivaas">
-      <div>
-        <div class="card-header">
-          <div class="card-title">Stage 4 &#183; Alaya Stays &#8594; Elivaas Invoice</div>
-          <span class="card-schedule">Auto: Days 1&#8211;10 Daily</span>
-        </div>
-        <p class="card-desc" style="margin-top:8px;">
-          Watches Gmail for <strong>owner.payout@elivaas.com</strong> Excel breakdown (5% &amp; 18% GST rows), generates <strong>Sunseeker Invoice - Elivaas - &lt;Month YYYY&gt;.pdf</strong> into the month folder, and emails you a 1-tap approval button.
-        </p>
-        <div class="meta-table" style="margin-top:12px;">
-          <div class="meta-row"><span class="meta-key">Automated Trigger:</span><span class="meta-val" id="sched-elivaas">Daily 09:00 IST (Days 1&#8211;10 Window)</span></div>
-          <div class="meta-row"><span class="meta-key">Last Automated Check:</span><span class="meta-val" id="last-elivaas">07 Nov 2026, 09:00 IST &#183; Verified</span></div>
-          <div class="meta-row"><span class="meta-key">Next Scheduled Run:</span><span class="meta-val" id="next-elivaas">08 Nov 2026, 09:00 AM IST</span></div>
-        </div>
-      </div>
-      <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;">
-        <span id="status-elivaas" class="status-chip chip-ready">&#10003; Completed (Saved in Folder)</span>
-        <button class="btn btn-override" id="btn-run-elivaas" onclick="triggerWorkflow('runElivaasInvoice')">Manual Override: Run Now</button>
-      </div>
-    </div>
-
-    <!-- Stage 5: 4i Advisory Monthly GST Filing Reply -->
-    <div class="card" id="card-gst-reply">
-      <div>
-        <div class="card-header">
-          <div class="card-title">Stage 5 &#183; 4i Advisory (Sandeep GB) GST Reply</div>
-          <span class="card-schedule">Auto: Days 1&#8211;10 Daily</span>
-        </div>
-        <p class="card-desc" style="margin-top:8px;">
-          Detects Sandeep GB's <strong>Sunseeker GST - &lt;Month YYYY&gt;</strong> email, attaches all rental invoices (ZoHouse, signed UBL, Elivaas) and GST bills from the month folder, and emails you a 1-tap approval button.
-        </p>
-        <div class="meta-table" style="margin-top:12px;">
-          <div class="meta-row"><span class="meta-key">Automated Trigger:</span><span class="meta-val" id="sched-gst">Daily 09:00 IST (Days 1&#8211;10 Window)</span></div>
-          <div class="meta-row"><span class="meta-key">Last Automated Check:</span><span class="meta-val" id="last-gst">07 Nov 2026, 09:00 IST &#183; Verified</span></div>
-          <div class="meta-row"><span class="meta-key">Next Scheduled Run:</span><span class="meta-val" id="next-gst">08 Nov 2026, 09:00 AM IST</span></div>
-        </div>
-      </div>
-      <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;">
-        <span id="status-gst-reply" class="status-chip chip-watching"><span class="pulse-dot"></span>Active Window &#183; Watching Inbox</span>
-        <button class="btn btn-override" id="btn-stage-gst" onclick="triggerWorkflow('stageGstReply')">Manual Override: Stage Draft</button>
-      </div>
-    </div>
-
-    <!-- Stage 6: 5th of Month HDFC Bank Statement & Payment Reconciliation -->
-    <div class="card" id="card-bank-reconcile">
-      <div>
-        <div class="card-header">
-          <div class="card-title">Stage 6 &#183; Bank Statement &amp; Payment Reconciliation</div>
-          <span class="card-schedule">Auto: 5th of Month</span>
-        </div>
-        <p class="card-desc" style="margin-top:8px;">
-          Reviews the Sunseeker HDFC Bank Statement (A/c <strong>17552000000580</strong>, Customer ID <strong>53755164</strong>, arriving by the 5th) plus credit alerts &amp; remittance advices to update payment pending/received statuses across all invoices starting Sep 26.
-        </p>
-        <div class="meta-table" style="margin-top:12px;">
-          <div class="meta-row"><span class="meta-key">Automated Trigger:</span><span class="meta-val" id="sched-bank">5th of Every Month, 09:00 IST</span></div>
-          <div class="meta-row"><span class="meta-key">Last Statement Review:</span><span class="meta-val" id="last-bank">05 Nov 2026, 09:00 IST &#183; Oct Statement Verified</span></div>
-          <div class="meta-row"><span class="meta-key">Next Scheduled Run:</span><span class="meta-val" id="next-bank">05 Dec 2026, 09:00 AM IST (Nov Statement)</span></div>
-        </div>
-      </div>
-      <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;">
-        <span id="status-bank-reconcile" class="status-chip chip-ready">&#10003; Reconciled (6 Received &#183; 2 Pending)</span>
-        <button class="btn btn-override" id="btn-reconcile-bank" onclick="triggerWorkflow('reconcileBankPayments')">Manual Override: Reconcile Now</button>
-      </div>
-    </div>
-  </main>
-
-  <!-- Historical Invoices & Payment Reconciliation Panel (Starting Sep 26) -->
+  <!-- UX-03: Primary Historical Invoices & Payment Reconciliation Panel Positioned Above Pipeline Grid -->
   <section class="panel" id="historical-reconciliation-panel">
     <div class="panel-box">
       <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:14px;">
         <h3 style="margin-bottom:0;">Historical Invoices &amp; Payment Reconciliation (Starting Sep 26 &#183; Updated 5th of Every Month)</h3>
-        <span class="status-chip chip-ready" id="reconcile-header-badge">HDFC Current A/c 17552000000580 (Cust ID 53755164) &#183; Verified</span>
+        <span class="status-chip chip-ready" id="reconcile-header-badge">&#10003; HDFC Current A/c 17552000000580 (Cust ID 53755164) &#183; Verified</span>
       </div>
 
       <div class="reconcile-kpi-grid">
@@ -664,6 +742,46 @@
         </div>
       </div>
 
+      <!-- UX-06: Interactive Filter Controls for Period, Status, and Client -->
+      <div class="reconcile-filter-bar">
+        <div class="filter-controls-left">
+          <div class="filter-group">
+            <label for="filter-period">Period:</label>
+            <select id="filter-period" onchange="applyLedgerFilters()">
+              <option value="ALL">All Periods (Sep&#8211;Nov 26)</option>
+              <option value="Sep 26">Sep 26</option>
+              <option value="Oct 26">Oct 26</option>
+              <option value="Nov 26">Nov 26</option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label for="filter-status">Status:</label>
+            <select id="filter-status" onchange="applyLedgerFilters()">
+              <option value="ALL">All Statuses</option>
+              <option value="Received">&#10003; Received</option>
+              <option value="Pending">&#9203; Pending</option>
+              <option value="Scheduled">&#128467;&#65039; Scheduled</option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label for="filter-client">Client:</label>
+            <select id="filter-client" onchange="applyLedgerFilters()">
+              <option value="ALL">All Clients</option>
+              <option value="ZoHouse">ZoHouse (Zostel)</option>
+              <option value="United Breweries">United Breweries (UBL)</option>
+              <option value="Elivaas">Elivaas (Alaya Stays)</option>
+            </select>
+          </div>
+
+          <button class="btn" id="btn-reset-filters" onclick="resetLedgerFilters()">Reset Filters</button>
+        </div>
+        <span class="filter-count-badge" id="reconcile-filter-count">Showing 9 of 9 invoices</span>
+      </div>
+
+      <div class="mobile-scroll-hint">&#8594; Swipe to see amounts &amp; status</div>
+
       <div class="table-scroll">
         <table class="reconcile-table" id="reconciliation-table">
           <thead>
@@ -676,144 +794,283 @@
               <th class="num-col">GST</th>
               <th class="num-col">10% TDS</th>
               <th class="num-col">Net Receivable</th>
-              <th>Payment Status</th>
+              <th class="status-col">Payment Status</th>
               <th class="num-col">Amount Received</th>
               <th>Date Received</th>
-              <th>HDFC Statement / Remittance Reference</th>
+              <th class="ref-col">HDFC Statement / Remittance Reference</th>
             </tr>
           </thead>
           <tbody id="reconciliation-table-body">
-            <tr>
+            <tr data-period="Sep 26" data-client="ZoHouse (Zostel Hospitality)" data-status="Received" data-net="457920" data-received="457920">
               <td><span class="period-pill">Sep 26</span></td>
-              <td>ZoHouse (Zostel Hospitality)</td>
+              <td class="client-col">ZoHouse (Zostel)</td>
               <td><span class="inv-code">ZOW-1-920261</span></td>
-              <td>01-Sep-2026</td>
+              <td class="date-col">01-Sep-2026</td>
               <td class="num-col">&#8377;4,24,000</td>
               <td class="num-col">&#8377;76,320</td>
               <td class="num-col">&#8722;&#8377;42,400</td>
               <td class="num-col"><strong>&#8377;4,57,920</strong></td>
-              <td><span class="status-chip chip-ready">&#10003; Received</span></td>
+              <td class="status-col"><span class="status-chip chip-ready">&#10003; Received</span></td>
               <td class="num-col">&#8377;4,57,920</td>
-              <td>01-Sep-2026</td>
-              <td>UTR 624418980096 &#183; IDFC First Bank Payout pout_TWk2rCm15U61Od</td>
+              <td class="date-col">01-Sep-2026</td>
+              <td class="ref-col" title="UTR 624418980096 &#183; IDFC First Bank Payout pout_TWk2rCm15U61Od"><div class="ref-text">UTR 624418980096 &#183; IDFC First Bank Payout pout_TWk2rCm15U61Od</div></td>
             </tr>
-            <tr>
+            <tr data-period="Sep 26" data-client="United Breweries Ltd (2B)" data-status="Received" data-net="288000" data-received="288000">
               <td><span class="period-pill">Sep 26</span></td>
-              <td>United Breweries Ltd (2B)</td>
+              <td class="client-col">United Breweries Ltd (2B)</td>
               <td><span class="inv-code">SS920261</span></td>
-              <td>01-Sep-2026</td>
+              <td class="date-col">01-Sep-2026</td>
               <td class="num-col">&#8377;3,20,000</td>
               <td class="num-col">&#8377;57,600 (RCM)</td>
               <td class="num-col">&#8722;&#8377;32,000</td>
               <td class="num-col"><strong>&#8377;2,88,000</strong></td>
-              <td><span class="status-chip chip-ready">&#10003; Received</span></td>
+              <td class="status-col"><span class="status-chip chip-ready">&#10003; Received</span></td>
               <td class="num-col">&#8377;2,88,000</td>
-              <td>05-Sep-2026</td>
-              <td>HDFC Credit Alert &#183; 2000031440-UNITED BREWERIES LTD</td>
+              <td class="date-col">05-Sep-2026</td>
+              <td class="ref-col" title="HDFC Credit Alert &#183; 2000031440-UNITED BREWERIES LTD"><div class="ref-text">HDFC Credit Alert &#183; 2000031440-UNITED BREWERIES LTD</div></td>
             </tr>
-            <tr>
+            <tr data-period="Sep 26" data-client="Elivaas (Alaya Stays Penthouse)" data-status="Received" data-net="36894" data-received="36894">
               <td><span class="period-pill">Sep 26</span></td>
-              <td>Elivaas (Alaya Stays Penthouse)</td>
+              <td class="client-col">Elivaas (Alaya Stays)</td>
               <td><span class="inv-code">SS9202630</span></td>
-              <td>30-Sep-2026</td>
+              <td class="date-col">30-Sep-2026</td>
               <td class="num-col">&#8377;38,836</td>
               <td class="num-col">&#8377;1,942</td>
               <td class="num-col">&#8722;&#8377;3,884</td>
               <td class="num-col"><strong>&#8377;36,894</strong></td>
-              <td><span class="status-chip chip-ready">&#10003; Received</span></td>
+              <td class="status-col"><span class="status-chip chip-ready">&#10003; Received</span></td>
               <td class="num-col">&#8377;36,894</td>
-              <td>10-Oct-2026</td>
-              <td>NEFT Cr-IDFB0021001-ELIVAAS (Oct HDFC Statement)</td>
+              <td class="date-col">10-Oct-2026</td>
+              <td class="ref-col" title="NEFT Cr-IDFB0021001-ELIVAAS (Oct HDFC Statement)"><div class="ref-text">NEFT Cr-IDFB0021001-ELIVAAS (Oct HDFC Statement)</div></td>
             </tr>
-            <tr>
+            <tr data-period="Oct 26" data-client="ZoHouse (Zostel Hospitality)" data-status="Received" data-net="457920" data-received="457920">
               <td><span class="period-pill">Oct 26</span></td>
-              <td>ZoHouse (Zostel Hospitality)</td>
+              <td class="client-col">ZoHouse (Zostel)</td>
               <td><span class="inv-code">ZOW-1-1020261</span></td>
-              <td>01-Oct-2026</td>
+              <td class="date-col">01-Oct-2026</td>
               <td class="num-col">&#8377;4,24,000</td>
               <td class="num-col">&#8377;76,320</td>
               <td class="num-col">&#8722;&#8377;42,400</td>
               <td class="num-col"><strong>&#8377;4,57,920</strong></td>
-              <td><span class="status-chip chip-ready">&#10003; Received</span></td>
+              <td class="status-col"><span class="status-chip chip-ready">&#10003; Received</span></td>
               <td class="num-col">&#8377;4,57,920</td>
-              <td>12-Oct-2026</td>
-              <td>UTR 628517620298 &#183; IDFC First Bank Payout pout_TmyekrKsVjR5v9</td>
+              <td class="date-col">12-Oct-2026</td>
+              <td class="ref-col" title="UTR 628517620298 &#183; IDFC First Bank Payout pout_TmyekrKsVjR5v9"><div class="ref-text">UTR 628517620298 &#183; IDFC First Bank Payout pout_TmyekrKsVjR5v9</div></td>
             </tr>
-            <tr>
+            <tr data-period="Oct 26" data-client="United Breweries Ltd (2B)" data-status="Received" data-net="288000" data-received="288000">
               <td><span class="period-pill">Oct 26</span></td>
-              <td>United Breweries Ltd (2B)</td>
+              <td class="client-col">United Breweries Ltd (2B)</td>
               <td><span class="inv-code">SS1020261</span></td>
-              <td>01-Oct-2026</td>
+              <td class="date-col">01-Oct-2026</td>
               <td class="num-col">&#8377;3,20,000</td>
               <td class="num-col">&#8377;57,600 (RCM)</td>
               <td class="num-col">&#8722;&#8377;32,000</td>
               <td class="num-col"><strong>&#8377;2,88,000</strong></td>
-              <td><span class="status-chip chip-ready">&#10003; Received</span></td>
+              <td class="status-col"><span class="status-chip chip-ready">&#10003; Received</span></td>
               <td class="num-col">&#8377;2,88,000</td>
-              <td>08-Oct-2026</td>
-              <td>HDFC Enet Advice &#183; FT610071601877 / 2000039673-UNITED BREWERIES LTD</td>
+              <td class="date-col">08-Oct-2026</td>
+              <td class="ref-col" title="HDFC Enet Advice &#183; FT610071601877 / 2000039673-UNITED BREWERIES LTD"><div class="ref-text">HDFC Enet Advice &#183; FT610071601877 / 2000039673-UNITED BREWERIES LTD</div></td>
             </tr>
-            <tr>
+            <tr data-period="Oct 26" data-client="Elivaas (Alaya Stays Penthouse)" data-status="Pending" data-net="95222" data-received="0">
               <td><span class="period-pill">Oct 26</span></td>
-              <td>Elivaas (Alaya Stays Penthouse)</td>
+              <td class="client-col">Elivaas (Alaya Stays)</td>
               <td><span class="inv-code">SS10202631</span></td>
-              <td>31-Oct-2026</td>
+              <td class="date-col">31-Oct-2026</td>
               <td class="num-col">&#8377;98,935</td>
               <td class="num-col">&#8377;6,180</td>
               <td class="num-col">&#8722;&#8377;9,893</td>
               <td class="num-col"><strong>&#8377;95,222</strong></td>
-              <td><span class="status-chip chip-pending">Pending</span></td>
+              <td class="status-col"><span class="status-chip chip-pending">&#9203; Pending</span></td>
               <td class="num-col">&#8377;0</td>
-              <td>&#8212;</td>
-              <td>Invoice sent 03-Nov-2026 &#183; Reconciles 05-Dec-2026 via Nov HDFC Statement</td>
+              <td class="date-col">&#8212;</td>
+              <td class="ref-col" title="Invoice sent 03-Nov-2026 &#183; Reconciles 05-Dec-2026 via Nov HDFC Statement"><div class="ref-text">Invoice sent 03-Nov-2026 &#183; Reconciles 05-Dec-2026 via Nov HDFC Statement</div></td>
             </tr>
-            <tr>
+            <tr data-period="Nov 26" data-client="ZoHouse (Zostel Hospitality)" data-status="Received (Adjusted)" data-net="457920" data-received="407920">
               <td><span class="period-pill">Nov 26</span></td>
-              <td>ZoHouse (Zostel Hospitality)</td>
+              <td class="client-col">ZoHouse (Zostel)</td>
               <td><span class="inv-code">ZOW-1-1120261</span></td>
-              <td>01-Nov-2026</td>
+              <td class="date-col">01-Nov-2026</td>
               <td class="num-col">&#8377;4,24,000</td>
               <td class="num-col">&#8377;76,320</td>
               <td class="num-col">&#8722;&#8377;42,400</td>
               <td class="num-col"><strong>&#8377;4,57,920</strong></td>
-              <td><span class="status-chip chip-ready">&#10003; Received (Adjusted)</span></td>
+              <td class="status-col"><span class="status-chip chip-ready">&#10003; Received (Adjusted)</span></td>
               <td class="num-col">&#8377;4,07,920</td>
-              <td>02-Nov-2026</td>
-              <td>UTR 630613746816 &#183; &#8377;4,07,920 received + &#8377;50,000 FY25-26 Q4 Form 16A TDS adj.</td>
+              <td class="date-col">02-Nov-2026</td>
+              <td class="ref-col" title="UTR 630613746816 &#183; &#8377;4,07,920 received + &#8377;50,000 FY25-26 Q4 Form 16A TDS adj."><div class="ref-text">UTR 630613746816 &#183; &#8377;4,07,920 received + &#8377;50,000 FY25-26 Q4 Form 16A TDS adj.</div></td>
             </tr>
-            <tr>
+            <tr data-period="Nov 26" data-client="United Breweries Ltd (2B)" data-status="Pending" data-net="288000" data-received="0">
               <td><span class="period-pill">Nov 26</span></td>
-              <td>United Breweries Ltd (2B)</td>
+              <td class="client-col">United Breweries Ltd (2B)</td>
               <td><span class="inv-code">SS1120261</span></td>
-              <td>01-Nov-2026</td>
+              <td class="date-col">01-Nov-2026</td>
               <td class="num-col">&#8377;3,20,000</td>
               <td class="num-col">&#8377;57,600 (RCM)</td>
               <td class="num-col">&#8722;&#8377;32,000</td>
               <td class="num-col"><strong>&#8377;2,88,000</strong></td>
-              <td><span class="status-chip chip-pending">Pending</span></td>
+              <td class="status-col"><span class="status-chip chip-pending">&#9203; Pending</span></td>
               <td class="num-col">&#8377;0</td>
-              <td>&#8212;</td>
-              <td>Signed invoice sent 28-Oct-2026 &#183; Reconciles 05-Dec-2026 via Nov HDFC Statement</td>
+              <td class="date-col">&#8212;</td>
+              <td class="ref-col" title="Signed invoice sent 28-Oct-2026 &#183; Reconciles 05-Dec-2026 via Nov HDFC Statement"><div class="ref-text">Signed invoice sent 28-Oct-2026 &#183; Reconciles 05-Dec-2026 via Nov HDFC Statement</div></td>
             </tr>
-            <tr>
+            <tr data-period="Nov 26" data-client="Elivaas (Alaya Stays Penthouse)" data-status="Scheduled" data-net="0" data-received="0">
               <td><span class="period-pill">Nov 26</span></td>
-              <td>Elivaas (Alaya Stays Penthouse)</td>
-              <td><span class="inv-code">Pending Nov Payout</span></td>
-              <td>30-Nov-2026</td>
+              <td class="client-col">Elivaas (Alaya Stays)</td>
+              <td><span class="inv-code" style="white-space:normal;">Pending<br>Payout</span></td>
+              <td class="date-col">30-Nov-2026</td>
               <td class="num-col">&#8212;</td>
               <td class="num-col">&#8212;</td>
               <td class="num-col">&#8212;</td>
               <td class="num-col"><strong>&#8212;</strong></td>
-              <td><span class="status-chip chip-scheduled">Scheduled (Days 1&#8211;10 Dec)</span></td>
+              <td class="status-col"><span class="status-chip chip-scheduled" title="Scheduled for Days 1&#8211;10 Dec 2026 upon Nov Owner Payout sheet">&#128467;&#65039; Scheduled (Dec)</span></td>
               <td class="num-col">&#8212;</td>
-              <td>&#8212;</td>
-              <td>Auto-generated Days 1&#8211;10 Dec 2026 upon Nov Owner Payout sheet</td>
+              <td class="date-col">&#8212;</td>
+              <td class="ref-col" title="Auto-generated Days 1&#8211;10 Dec 2026 upon Nov Owner Payout sheet"><div class="ref-text">Auto-generated Days 1&#8211;10 Dec 2026 upon Nov Owner Payout sheet</div></td>
             </tr>
           </tbody>
         </table>
       </div>
     </div>
   </section>
+
+  <div class="section-heading">
+    <h2>6-Stage Monthly Autonomous Pipeline</h2>
+    <span class="section-heading-sub">All stages execute automatically on schedule &#183; Manual overrides provided for testing</span>
+  </div>
+
+  <main class="main-grid">
+    <!-- Stage 1: ZoHouse & UBL Rental Invoices -->
+    <div class="card" id="card-rent">
+      <div>
+        <div class="card-header">
+          <div class="card-title">Stage 1 &#183; ZoHouse &amp; UBL Rental Invoices</div>
+          <span class="card-schedule">Auto: 28th of Month</span>
+        </div>
+        <p class="card-desc" style="margin-top:8px;">
+          Automatically generates ZoHouse (&#8377;4,57,920) &amp; UBL (&#8377;2,88,000) PDFs into <strong>Sunseeker Invoices/&lt;Mmm YY&gt;</strong>, emails unsigned UBL to Sandeep GB for digital signature, and sends you a 1-tap approval email for ZoHouse.
+        </p>
+        <div class="meta-table" style="margin-top:12px;">
+          <div class="meta-row"><span class="meta-key">Automated Trigger:</span><span class="meta-val" id="sched-rent">28th of Preceding Month, 09:00 IST</span></div>
+          <div class="meta-row"><span class="meta-key">Last Automated Check:</span><span class="meta-val" id="last-rent">07 Nov 2026, 09:00 IST &#183; Verified</span></div>
+          <div class="meta-row"><span class="meta-key">Next Scheduled Run:</span><span class="meta-val" id="next-rent">28 Nov 2026, 09:00 AM IST (Dec 26)</span></div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+        <span id="status-rent" class="status-chip chip-ready">&#10003; Completed (Saved in Folder)</span>
+        <button class="btn btn-override" id="btn-run-rent" onclick="triggerWorkflow('runRentInvoices')">Manual Override: Run Now</button>
+      </div>
+    </div>
+
+    <!-- Stage 2: UBL Signed PDF Watcher -->
+    <div class="card" id="card-ubl-signed">
+      <div>
+        <div class="card-header">
+          <div class="card-title">Stage 2 &#183; Signed UBL Reply Watcher</div>
+          <span class="card-schedule">Auto: Days 28&#8211;5 Daily</span>
+        </div>
+        <p class="card-desc" style="margin-top:8px;">
+          Watches Gmail daily for Sandeep GB's reply with the digitally signed UBL PDF, automatically replaces the unsigned PDF in <strong>Sunseeker Invoices/&lt;Mmm YY&gt;</strong>, and sends you a 1-tap approval email for UBL.
+        </p>
+        <div class="meta-table" style="margin-top:12px;">
+          <div class="meta-row"><span class="meta-key">Automated Trigger:</span><span class="meta-val" id="sched-ubl">Daily 09:00 IST (Days 28&#8211;5 Window)</span></div>
+          <div class="meta-row"><span class="meta-key">Last Automated Check:</span><span class="meta-val" id="last-ubl">07 Nov 2026, 09:00 IST &#183; Verified</span></div>
+          <div class="meta-row"><span class="meta-key">Next Scheduled Run:</span><span class="meta-val" id="next-ubl">28 Nov 2026, 09:00 AM IST</span></div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+        <span id="status-ubl" class="status-chip chip-ready">&#10003; Completed (Signed PDF Saved)</span>
+        <button class="btn btn-override" id="btn-check-ubl" onclick="triggerWorkflow('checkSignedUbl')">Manual Override: Check Inbox</button>
+      </div>
+    </div>
+
+    <!-- Stage 3: End-of-Month GST Bill Scanner -->
+    <div class="card" id="card-gst-bills">
+      <div>
+        <div class="card-header">
+          <div class="card-title">Stage 3 &#183; Vendor GST Bill Scanner</div>
+          <span class="card-schedule">Auto: Last Day of Month</span>
+        </div>
+        <p class="card-desc" style="margin-top:8px;">
+          Automatically scans Gmail on the last day of each month for Sunseeker vendor bills with GST (ignoring D.M &amp; SONS, Airtel, and non-GST bills) and emails you a 1-tap <strong>Save All to Folder</strong> prompt.
+        </p>
+        <div class="meta-table" style="margin-top:12px;">
+          <div class="meta-row"><span class="meta-key">Automated Trigger:</span><span class="meta-val" id="sched-bills">Last Day of Month, 09:00 IST</span></div>
+          <div class="meta-row"><span class="meta-key">Last Automated Check:</span><span class="meta-val" id="last-bills">31 Oct 2026, 09:00 IST &#183; Scanned</span></div>
+          <div class="meta-row"><span class="meta-key">Next Scheduled Run:</span><span class="meta-val" id="next-bills">30 Nov 2026, 09:00 AM IST</span></div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+        <span id="status-bills" class="status-chip chip-scheduled">&#128467;&#65039; Scheduled &#183; 30 Nov 2026</span>
+        <button class="btn btn-override" id="btn-scan-bills" onclick="triggerWorkflow('scanGstBills')">Manual Override: Scan Now</button>
+      </div>
+    </div>
+
+    <!-- Stage 4: Alaya Stays -> Elivaas Invoice Generator -->
+    <div class="card" id="card-elivaas">
+      <div>
+        <div class="card-header">
+          <div class="card-title">Stage 4 &#183; Alaya Stays &#8594; Elivaas Invoice</div>
+          <span class="card-schedule">Auto: Days 1&#8211;10 Daily</span>
+        </div>
+        <p class="card-desc" style="margin-top:8px;">
+          Watches Gmail for <strong>owner.payout@elivaas.com</strong> Excel breakdown (5% &amp; 18% GST rows), generates <strong>Sunseeker Invoice - Elivaas - &lt;Month YYYY&gt;.pdf</strong> into the month folder, and emails you a 1-tap approval button.
+        </p>
+        <div class="meta-table" style="margin-top:12px;">
+          <div class="meta-row"><span class="meta-key">Automated Trigger:</span><span class="meta-val" id="sched-elivaas">Daily 09:00 IST (Days 1&#8211;10 Window)</span></div>
+          <div class="meta-row"><span class="meta-key">Last Automated Check:</span><span class="meta-val" id="last-elivaas">07 Nov 2026, 09:00 IST &#183; Verified</span></div>
+          <div class="meta-row"><span class="meta-key">Next Scheduled Run:</span><span class="meta-val" id="next-elivaas">08 Nov 2026, 09:00 AM IST</span></div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+        <span id="status-elivaas" class="status-chip chip-ready">&#10003; Completed (Saved in Folder)</span>
+        <button class="btn btn-override" id="btn-run-elivaas" onclick="triggerWorkflow('runElivaasInvoice')">Manual Override: Run Now</button>
+      </div>
+    </div>
+
+    <!-- Stage 5: 4i Advisory Monthly GST Filing Reply -->
+    <div class="card" id="card-gst-reply">
+      <div>
+        <div class="card-header">
+          <div class="card-title">Stage 5 &#183; 4i Advisory (Sandeep GB) GST Reply</div>
+          <span class="card-schedule">Auto: Days 1&#8211;10 Daily</span>
+        </div>
+        <p class="card-desc" style="margin-top:8px;">
+          Detects Sandeep GB's <strong>Sunseeker GST - &lt;Month YYYY&gt;</strong> email, attaches all rental invoices (ZoHouse, signed UBL, Elivaas) and GST bills from the month folder, and emails you a 1-tap approval button.
+        </p>
+        <div class="meta-table" style="margin-top:12px;">
+          <div class="meta-row"><span class="meta-key">Automated Trigger:</span><span class="meta-val" id="sched-gst">Daily 09:00 IST (Days 1&#8211;10 Window)</span></div>
+          <div class="meta-row"><span class="meta-key">Last Automated Check:</span><span class="meta-val" id="last-gst">07 Nov 2026, 09:00 IST &#183; Verified</span></div>
+          <div class="meta-row"><span class="meta-key">Next Scheduled Run:</span><span class="meta-val" id="next-gst">08 Nov 2026, 09:00 AM IST</span></div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+        <span id="status-gst-reply" class="status-chip chip-watching"><span class="pulse-dot"></span>Active Window &#183; Watching Inbox</span>
+        <button class="btn btn-override" id="btn-stage-gst" onclick="triggerWorkflow('stageGstReply')">Manual Override: Stage Draft</button>
+      </div>
+    </div>
+
+    <!-- Stage 6: 5th of Month HDFC Bank Statement & Payment Reconciliation -->
+    <div class="card" id="card-bank-reconcile">
+      <div>
+        <div class="card-header">
+          <div class="card-title">Stage 6 &#183; Bank Statement &amp; Payment Reconciliation</div>
+          <span class="card-schedule">Auto: 5th of Month</span>
+        </div>
+        <p class="card-desc" style="margin-top:8px;">
+          Reviews the Sunseeker HDFC Bank Statement (A/c <strong>17552000000580</strong>, Customer ID <strong>53755164</strong>, arriving by the 5th) plus credit alerts &amp; remittance advices to update payment pending/received statuses across all invoices starting Sep 26.
+        </p>
+        <div class="meta-table" style="margin-top:12px;">
+          <div class="meta-row"><span class="meta-key">Automated Trigger:</span><span class="meta-val" id="sched-bank">5th of Every Month, 09:00 IST</span></div>
+          <div class="meta-row"><span class="meta-key">Last Statement Review:</span><span class="meta-val" id="last-bank">05 Nov 2026, 09:00 IST &#183; Oct Statement Verified</span></div>
+          <div class="meta-row"><span class="meta-key">Next Scheduled Run:</span><span class="meta-val" id="next-bank">05 Dec 2026, 09:00 AM IST (Nov Statement)</span></div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+        <span id="status-bank-reconcile" class="status-chip chip-ready">&#10003; Reconciled (6 Received &#183; 2 Pending)</span>
+        <button class="btn btn-override" id="btn-reconcile-bank" onclick="triggerWorkflow('reconcileBankPayments')">Manual Override: Reconcile Now</button>
+      </div>
+    </div>
+  </main>
 
   <section class="panel">
     <div class="panel-box">
@@ -838,39 +1095,41 @@
   <section class="panel">
     <div class="panel-box">
       <h3>Automated Execution History &amp; Telemetry Log</h3>
-      <table class="history-table" id="history-table">
-        <thead>
-          <tr>
-            <th>Timestamp (IST)</th>
-            <th>Trigger Source</th>
-            <th>Workflow Stage</th>
-            <th>Status</th>
-            <th>Summary</th>
-          </tr>
-        </thead>
-        <tbody id="history-table-body">
-          <tr>
-            <td>07 Nov 2026, 09:00 AM IST</td>
-            <td>Scheduled Daily (09:00 IST)</td>
-            <td>Daily Cloud Check</td>
-            <td><span class="status-chip chip-ready">Completed</span></td>
-            <td>Verified Oct 26 folder (3 core invoices synced); watching Days 1&#8211;10 active window.</td>
-          </tr>
-          <tr>
-            <td>05 Nov 2026, 09:00 AM IST</td>
-            <td>5th-of-Month Bank Reconcile</td>
-            <td>Stage 6 &#183; Bank Statement Check</td>
-            <td><span class="status-chip chip-ready">Completed</span></td>
-            <td>Reviewed HDFC A/c 17552000000580 Oct statement &amp; credit alerts; reconciled Sep&#8211;Nov 26 payment statuses.</td>
-          </tr>
-        </tbody>
-      </table>
-      <div class="log-box" id="activity-log">[v03.03] Autonomous Cloud Agent Monitor active. Daily trigger runs automatically at 09:00 AM IST (Bank Reconciliation on 5th of Month).</div>
+      <div class="table-scroll">
+        <table class="history-table" id="history-table">
+          <thead>
+            <tr>
+              <th>Timestamp (IST)</th>
+              <th>Trigger Source</th>
+              <th>Workflow Stage</th>
+              <th>Status</th>
+              <th>Summary</th>
+            </tr>
+          </thead>
+          <tbody id="history-table-body">
+            <tr>
+              <td>07 Nov 2026, 09:00 AM IST</td>
+              <td>Scheduled Daily (09:00 IST)</td>
+              <td>Daily Cloud Check</td>
+              <td><span class="status-chip chip-ready">&#10003; Completed</span></td>
+              <td>Verified Oct 26 folder (3 core invoices synced); watching Days 1&#8211;10 active window.</td>
+            </tr>
+            <tr>
+              <td>05 Nov 2026, 09:00 AM IST</td>
+              <td>5th-of-Month Bank Reconcile</td>
+              <td>Stage 6 &#183; Bank Statement Check</td>
+              <td><span class="status-chip chip-ready">&#10003; Completed</span></td>
+              <td>Reviewed HDFC A/c 17552000000580 Oct statement &amp; credit alerts; reconciled Sep&#8211;Nov 26 payment statuses.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="log-box" id="activity-log">[v03.04] Autonomous Cloud Agent Monitor active. Daily trigger runs automatically at 09:00 AM IST (Bank Reconciliation on 5th of Month).</div>
     </div>
   </section>
 
   <script>
-    const APP_VERSION = "v03.03";
+    const APP_VERSION = "v03.04";
     const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbwOuoHmh8zHkCK7_ErjzdA_JgLmEH8NzK2RMr4oshhEnYAypC0ZOsUcqNFTWhs2uZhy/exec";
     const MONTH_ABBR = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 
@@ -885,13 +1144,91 @@
       return "&#8377;" + Number(n).toLocaleString("en-IN");
     }
 
+    function applyLedgerFilters(silent) {
+      const periodVal = (document.getElementById("filter-period") || {}).value || "ALL";
+      const statusVal = (document.getElementById("filter-status") || {}).value || "ALL";
+      const clientVal = (document.getElementById("filter-client") || {}).value || "ALL";
+
+      const rows = Array.from(document.querySelectorAll("#reconciliation-table-body tr"));
+      let visibleCount = 0;
+      let totalInvoiced = 0;
+      let totalBankReceived = 0;
+      let totalPending = 0;
+      let includesNovZoHouseAdj = false;
+
+      rows.forEach(function(tr) {
+        const rowPeriod = tr.getAttribute("data-period") || (tr.cells[0] ? tr.cells[0].textContent.trim() : "");
+        const rowClient = tr.getAttribute("data-client") || (tr.cells[1] ? tr.cells[1].textContent.trim() : "");
+        const rowStatus = tr.getAttribute("data-status") || (tr.cells[8] ? tr.cells[8].textContent.trim() : "");
+        const netVal = Number(tr.getAttribute("data-net") || 0);
+        const recVal = Number(tr.getAttribute("data-received") || 0);
+
+        const matchPeriod = periodVal === "ALL" || rowPeriod === periodVal;
+        const matchStatus =
+          statusVal === "ALL" ||
+          (statusVal === "Received" && rowStatus.indexOf("Received") >= 0) ||
+          (statusVal === "Pending" && rowStatus.indexOf("Pending") >= 0) ||
+          (statusVal === "Scheduled" && (rowStatus.indexOf("Scheduled") >= 0 || rowStatus.indexOf("Not Yet Billed") >= 0));
+        const matchClient = clientVal === "ALL" || rowClient.toLowerCase().indexOf(clientVal.toLowerCase()) >= 0;
+
+        if (matchPeriod && matchStatus && matchClient) {
+          tr.style.display = "";
+          visibleCount++;
+          totalInvoiced += netVal;
+          totalBankReceived += recVal;
+          if (rowStatus.indexOf("Pending") >= 0) {
+            totalPending += netVal;
+          }
+          if (rowStatus.indexOf("Adjusted") >= 0) {
+            includesNovZoHouseAdj = true;
+          }
+        } else {
+          tr.style.display = "none";
+        }
+      });
+
+      const countEl = document.getElementById("reconcile-filter-count");
+      if (countEl) {
+        countEl.textContent = "Showing " + visibleCount + " of " + rows.length + " invoices";
+      }
+
+      const settledTotal = totalBankReceived + (includesNovZoHouseAdj ? 50000 : 0);
+      document.getElementById("kpi-invoiced-val").innerHTML = fmtInrNum(totalInvoiced);
+      document.getElementById("kpi-received-val").innerHTML = fmtInrNum(settledTotal);
+      document.getElementById("kpi-pending-val").innerHTML = fmtInrNum(totalPending);
+
+      if (!silent) {
+        appendLog(
+          "Filtered Payment Ledger -> Period: " +
+            periodVal +
+            ", Status: " +
+            statusVal +
+            ", Client: " +
+            clientVal +
+            " (" +
+            visibleCount +
+            " of " +
+            rows.length +
+            " invoices shown)."
+        );
+      }
+    }
+
+    function resetLedgerFilters() {
+      const p = document.getElementById("filter-period");
+      const s = document.getElementById("filter-status");
+      const c = document.getElementById("filter-client");
+      if (p) p.value = "ALL";
+      if (s) s.value = "ALL";
+      if (c) c.value = "ALL";
+      applyLedgerFilters(true);
+      appendLog("Reset Payment Ledger filters -> Showing all 9 invoices (Sep 26 – Nov 26).");
+    }
+
     function renderPaymentLedger(ledger) {
       if (!ledger || !Array.isArray(ledger) || ledger.length === 0) return;
       const tbody = document.getElementById("reconciliation-table-body");
       tbody.innerHTML = "";
-      let totalInvoiced = 0;
-      let totalBankReceived = 0;
-      let totalPending = 0;
       let receivedCount = 0;
       let pendingCount = 0;
 
@@ -900,26 +1237,17 @@
         const isReceived = row.status && row.status.indexOf("Received") >= 0;
         const isPending = row.status === "Pending";
 
-        if (!isNotBilled) {
-          totalInvoiced += Number(row.netReceivable || 0);
-          totalBankReceived += Number(row.amountReceived || 0);
-        }
         if (isReceived) receivedCount++;
-        if (isPending) {
-          pendingCount++;
-          totalPending += Number(row.netReceivable || 0);
-        }
+        if (isPending) pendingCount++;
 
         let badgeClass = "chip-scheduled";
-        let badgeLabel = row.status;
+        let badgeLabel = "&#128467;&#65039; Scheduled (Dec)";
         if (isReceived) {
           badgeClass = "chip-ready";
           badgeLabel = "&#10003; " + row.status;
         } else if (isPending) {
           badgeClass = "chip-pending";
-          badgeLabel = "Pending";
-        } else {
-          badgeLabel = "Scheduled (Days 1&#8211;10 Dec)";
+          badgeLabel = "&#9203; Pending";
         }
 
         const gstStr = isNotBilled
@@ -929,31 +1257,37 @@
               : fmtInrNum(row.gst));
 
         const tr = document.createElement("tr");
+        tr.setAttribute("data-period", row.period || "");
+        tr.setAttribute("data-client", row.client || "");
+        tr.setAttribute("data-status", isNotBilled ? "Scheduled" : (row.status || ""));
+        tr.setAttribute("data-net", isNotBilled ? "0" : String(row.netReceivable || 0));
+        tr.setAttribute("data-received", isNotBilled ? "0" : String(row.amountReceived || 0));
+
+        const refClean = row.reference || "";
+        const refSafe = String(refClean).replace(/"/g, "&quot;");
+
         tr.innerHTML =
           "<td><span class='period-pill'>" + row.period + "</span></td>" +
-          "<td>" + row.client + "</td>" +
+          "<td class='client-col'>" + row.client + "</td>" +
           "<td><span class='inv-code'>" + row.invoiceNo + "</span></td>" +
-          "<td>" + row.invoiceDate + "</td>" +
+          "<td class='date-col'>" + row.invoiceDate + "</td>" +
           "<td class='num-col'>" + (isNotBilled ? "&#8212;" : fmtInrNum(row.subtotal)) + "</td>" +
           "<td class='num-col'>" + gstStr + "</td>" +
           "<td class='num-col'>" + (isNotBilled ? "&#8212;" : ("&#8722;" + fmtInrNum(row.tds))) + "</td>" +
           "<td class='num-col'><strong>" + (isNotBilled ? "&#8212;" : fmtInrNum(row.netReceivable)) + "</strong></td>" +
-          "<td><span class='status-chip " + badgeClass + "'>" + badgeLabel + "</span></td>" +
+          "<td class='status-col'><span class='status-chip " + badgeClass + "'>" + badgeLabel + "</span></td>" +
           "<td class='num-col'>" + (isNotBilled ? "&#8212;" : fmtInrNum(row.amountReceived)) + "</td>" +
-          "<td>" + (row.dateReceived || "&#8212;") + "</td>" +
-          "<td>" + (row.reference || "") + "</td>";
+          "<td class='date-col'>" + (row.dateReceived || "&#8212;") + "</td>" +
+          "<td class='ref-col' title=\"" + refSafe + "\"><div class='ref-text'>" + (refClean || "&#8212;") + "</div></td>";
         tbody.appendChild(tr);
       });
 
-      const settledTotal = totalBankReceived + 50000;
-      document.getElementById("kpi-invoiced-val").innerHTML = fmtInrNum(totalInvoiced);
-      document.getElementById("kpi-received-val").innerHTML = fmtInrNum(settledTotal);
-      document.getElementById("kpi-pending-val").innerHTML = fmtInrNum(totalPending);
       const bankChip = document.getElementById("status-bank-reconcile");
       if (bankChip) {
         bankChip.className = "status-chip chip-ready";
         bankChip.innerHTML = "&#10003; Reconciled (" + receivedCount + " Received &#183; " + pendingCount + " Pending)";
       }
+      applyLedgerFilters(true);
     }
 
     function getSelectedPeriod() {
@@ -971,7 +1305,7 @@
       if (!files || files.length === 0) {
         const li = document.createElement("li");
         li.className = "file-item";
-        li.innerHTML = "<span>No deliverables generated yet for " + folderName + " (Scheduled automatically)</span><span class='status-chip chip-scheduled'>Scheduled</span>";
+        li.innerHTML = "<span>No deliverables generated yet for " + folderName + " (Scheduled automatically)</span><span class='status-chip chip-scheduled'>&#128467;&#65039; Scheduled</span>";
         ul.appendChild(li);
         return;
       }
@@ -1001,7 +1335,7 @@
         rentChip.innerHTML = "&#10003; Completed (Saved in " + folderName + ")";
       } else {
         rentChip.className = "status-chip chip-scheduled";
-        rentChip.innerHTML = "Scheduled &#183; 28th of Month";
+        rentChip.innerHTML = "&#128467;&#65039; Scheduled &#183; 28th of Month";
       }
 
       const ublChip = document.getElementById("status-ubl");
@@ -1052,7 +1386,7 @@
               "<td>" + item.timestampIst + "</td>" +
               "<td>" + item.triggerType + "</td>" +
               "<td>" + item.stage + "</td>" +
-              "<td><span class='status-chip chip-ready'>" + item.status + "</span></td>" +
+              "<td><span class='status-chip chip-ready'>&#10003; " + item.status + "</span></td>" +
               "<td>" + item.summary + "</td>";
             tbody.appendChild(tr);
           });
@@ -1073,7 +1407,7 @@
                 renderPaymentLedger(res.paymentLedger);
               }
               if (res.triggerInstalled) {
-                document.getElementById("trigger-badge").innerHTML = "<span class='pulse-dot'></span>Autonomous Cloud Schedule Active (09:00 AM IST Daily)";
+                document.getElementById("trigger-badge").innerHTML = "<span class='pulse-dot'></span>&#10003; Autonomous Cloud Schedule Active (09:00 AM IST Daily)";
                 document.getElementById("btn-install-trigger").style.display = "none";
               } else {
                 document.getElementById("btn-install-trigger").style.display = "inline-block";
@@ -1128,7 +1462,7 @@
         google.script.run
           .withSuccessHandler(function(res) {
             appendLog(res.message || "Daily trigger active.");
-            document.getElementById("trigger-badge").innerHTML = "<span class='pulse-dot'></span>Autonomous Cloud Schedule Active (09:00 AM IST Daily)";
+            document.getElementById("trigger-badge").innerHTML = "<span class='pulse-dot'></span>&#10003; Autonomous Cloud Schedule Active (09:00 AM IST Daily)";
             document.getElementById("btn-install-trigger").style.display = "none";
           })
           .withFailureHandler(function(err) {
@@ -1136,7 +1470,7 @@
           })
           .installDailyTriggers();
       } else {
-        document.getElementById("trigger-badge").innerHTML = "<span class='pulse-dot'></span>Autonomous Cloud Schedule Active (09:00 AM IST Daily)";
+        document.getElementById("trigger-badge").innerHTML = "<span class='pulse-dot'></span>&#10003; Autonomous Cloud Schedule Active (09:00 AM IST Daily)";
         document.getElementById("btn-install-trigger").style.display = "none";
         appendLog("Daily 9:00 AM IST trigger verified.");
       }
