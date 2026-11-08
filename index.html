@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sunseeker Remote Agent v03.04</title>
+  <title>Sunseeker Remote Agent v04.05</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     html, body {
@@ -635,7 +635,7 @@
       <div>
         <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
           <h1>Sunseeker Properties &#8212; Autonomous Cloud Agent</h1>
-          <span class="version-badge" id="app-version">v03.04</span>
+          <span class="version-badge" id="app-version">v04.05</span>
         </div>
         <div class="brand-sub">Unattended Google Apps Script Daemon &#183; Synced with Google Drive &amp; Mac Desktop</div>
       </div>
@@ -1039,12 +1039,12 @@
         </p>
         <div class="meta-table" style="margin-top:12px;">
           <div class="meta-row"><span class="meta-key">Automated Trigger:</span><span class="meta-val" id="sched-gst">Daily 09:00 IST (Days 1&#8211;10 Window)</span></div>
-          <div class="meta-row"><span class="meta-key">Last Automated Check:</span><span class="meta-val" id="last-gst">07 Nov 2026, 09:00 IST &#183; Verified</span></div>
+          <div class="meta-row"><span class="meta-key">Last Automated Check:</span><span class="meta-val" id="last-gst">08 Nov 2026, 09:00 IST &#183; Sent Reply Verified</span></div>
           <div class="meta-row"><span class="meta-key">Next Scheduled Run:</span><span class="meta-val" id="next-gst">08 Nov 2026, 09:00 AM IST</span></div>
         </div>
       </div>
       <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
-        <span id="status-gst-reply" class="status-chip chip-watching"><span class="pulse-dot"></span>Active Window &#183; Watching Inbox</span>
+        <span id="status-gst-reply" class="status-chip chip-ready">&#10003; Completed (Reply Sent 03 Nov)</span>
         <button class="btn btn-override" id="btn-stage-gst" onclick="triggerWorkflow('stageGstReply')">Manual Override: Stage Draft</button>
       </div>
     </div>
@@ -1124,12 +1124,12 @@
           </tbody>
         </table>
       </div>
-      <div class="log-box" id="activity-log">[v03.04] Autonomous Cloud Agent Monitor active. Daily trigger runs automatically at 09:00 AM IST (Bank Reconciliation on 5th of Month).</div>
+      <div class="log-box" id="activity-log">[v04.05] Autonomous Cloud Agent Monitor active. Daily trigger runs automatically at 09:00 AM IST (Bank Reconciliation on 5th of Month).</div>
     </div>
   </section>
 
   <script>
-    const APP_VERSION = "v03.04";
+    const APP_VERSION = "v04.05";
     const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbwOuoHmh8zHkCK7_ErjzdA_JgLmEH8NzK2RMr4oshhEnYAypC0ZOsUcqNFTWhs2uZhy/exec";
     const MONTH_ABBR = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 
@@ -1357,7 +1357,11 @@
       }
 
       const gstChip = document.getElementById("status-gst-reply");
-      if (checklist && checklist.gstReplyStaged) {
+      if (checklist && checklist.gstReplySent) {
+        gstChip.className = "status-chip chip-ready";
+        var datePart = checklist.gstReplySentDate ? checklist.gstReplySentDate.split(",")[0] : "";
+        gstChip.innerHTML = "&#10003; Completed (Reply Sent" + (datePart ? (" " + datePart) : "") + ")";
+      } else if (checklist && checklist.gstReplyStaged) {
         gstChip.className = "status-chip chip-ready";
         gstChip.innerHTML = "&#10003; Completed (Reply Draft Staged)";
       } else {
@@ -1426,7 +1430,15 @@
           { name: "Sunseeker Invoice - Zohouse " + p.folderName + " - Invoice.pdf" }
         ];
         renderFilesList(p.folderName, defaultFiles);
-        updateStageBadges(p.folderName, { zohouseGenerated: true, ublGenerated: true, elivaasGenerated: true, gstReplyStaged: false }, null);
+        const isOct26 = p.folderName === "Oct 26";
+        updateStageBadges(p.folderName, {
+          zohouseGenerated: true,
+          ublGenerated: true,
+          elivaasGenerated: true,
+          gstReplyStaged: false,
+          gstReplySent: isOct26,
+          gstReplySentDate: isOct26 ? "03 Nov 2026, 06:15 PM IST" : ""
+        }, null);
         appendLog("Status synced for " + p.folderName + " (preview mode).");
       }
     }
