@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sunseeker Remote Agent v04.05</title>
+  <title>Sunseeker Remote Agent v05.06</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     html, body {
@@ -12,14 +12,15 @@
     }
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background: #0b1120;
+      background: #090d16;
       color: #f8fafc;
       min-height: 100vh;
       padding-bottom: 56px;
+      letter-spacing: -0.01em;
     }
     header {
-      background: #111827;
-      border-bottom: 1px solid #1e293b;
+      background: #0e1526;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
       padding: 16px 20px;
       display: flex;
       align-items: center;
@@ -37,7 +38,7 @@
       font-size: 19px;
       font-weight: 700;
       color: #ffffff;
-      letter-spacing: -0.01em;
+      letter-spacing: -0.02em;
     }
     .brand-sub {
       font-size: 12px;
@@ -45,7 +46,7 @@
       margin-top: 2px;
     }
     .version-badge {
-      background: rgba(245, 200, 66, 0.15);
+      background: rgba(245, 200, 66, 0.12);
       color: #f5c842;
       border: 1px solid #f5c842;
       font-weight: 700;
@@ -59,8 +60,8 @@
       width: 8px;
       height: 8px;
       border-radius: 50%;
-      background: #4ade80;
-      box-shadow: 0 0 8px #4ade80;
+      background: #34d399;
+      box-shadow: 0 0 10px rgba(52, 211, 153, 0.6);
       margin-right: 6px;
       flex-shrink: 0;
     }
@@ -73,14 +74,15 @@
       gap: 12px;
     }
     .telemetry-card {
-      background: #131c31;
-      border: 1px solid #263554;
+      background: #0e1526;
+      border: 1px solid rgba(255, 255, 255, 0.08);
       border-radius: 12px;
       padding: 14px 16px;
       display: flex;
       flex-direction: column;
       gap: 6px;
       min-width: 0;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
     }
     .telemetry-label {
       font-size: 11px;
@@ -103,15 +105,15 @@
     .progress-track {
       width: 100%;
       height: 7px;
-      background: #0f172a;
+      background: #080c14;
       border-radius: 999px;
       overflow: hidden;
       margin-top: 4px;
-      border: 1px solid #1e293b;
+      border: 1px solid rgba(255, 255, 255, 0.06);
     }
     .progress-fill {
       height: 100%;
-      background: linear-gradient(90deg, #16a34a, #4ade80);
+      background: linear-gradient(90deg, #10b981, #34d399);
       border-radius: 999px;
       transition: width 0.3s ease;
     }
@@ -119,14 +121,15 @@
       max-width: 1240px;
       margin: 14px auto 0;
       padding: 12px 16px;
-      background: #111827;
-      border: 1px solid #1e293b;
+      background: #0e1526;
+      border: 1px solid rgba(255, 255, 255, 0.08);
       border-radius: 12px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       flex-wrap: wrap;
       gap: 12px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
     }
     .control-group {
       display: flex;
@@ -141,9 +144,9 @@
       font-weight: 600;
     }
     select {
-      background: #0b1120;
+      background: #080c14;
       color: #f8fafc;
-      border: 1px solid #334155;
+      border: 1px solid rgba(255, 255, 255, 0.12);
       border-radius: 8px;
       padding: 7px 11px;
       font-size: 12.5px;
@@ -153,8 +156,8 @@
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      background: #0b1120;
-      border: 1px solid #334155;
+      background: #080c14;
+      border: 1px solid rgba(255, 255, 255, 0.12);
       color: #cbd5e1;
       padding: 6px 12px;
       border-radius: 8px;
@@ -164,9 +167,9 @@
       min-height: 36px;
     }
     .btn {
-      background: #1e293b;
-      color: #e2e8f0;
-      border: 1px solid #334155;
+      background: #1a233a;
+      color: #f1f5f9;
+      border: 1px solid rgba(255, 255, 255, 0.12);
       border-radius: 8px;
       padding: 7px 13px;
       font-size: 12px;
@@ -175,18 +178,18 @@
       transition: all 0.15s;
       min-height: 36px;
     }
-    .btn:hover { background: #334155; color: #ffffff; }
+    .btn:hover { background: #253354; color: #ffffff; }
     .btn-override {
       background: transparent;
       color: #cbd5e1;
-      border: 1px dashed #475569;
+      border: 1px dashed rgba(255, 255, 255, 0.2);
       padding: 7px 11px;
       font-size: 11px;
       border-radius: 6px;
       min-height: 36px;
     }
     .btn-override:hover {
-      background: #1e293b;
+      background: #1a233a;
       color: #f8fafc;
       border-color: #94a3b8;
     }
@@ -201,7 +204,7 @@
       gap: 8px;
     }
     .section-heading h2 {
-      font-size: 14px;
+      font-size: 13px;
       text-transform: uppercase;
       letter-spacing: 0.06em;
       color: #94a3b8;
@@ -220,8 +223,8 @@
       gap: 14px;
     }
     .card {
-      background: #131c31;
-      border: 1px solid #263554;
+      background: #0e1526;
+      border: 1px solid rgba(255, 255, 255, 0.08);
       border-radius: 12px;
       padding: 16px;
       display: flex;
@@ -229,6 +232,7 @@
       justify-content: space-between;
       gap: 14px;
       min-width: 0;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
     }
     .card-header {
       display: flex;
@@ -240,15 +244,16 @@
       font-size: 14.5px;
       font-weight: 700;
       color: #f8fafc;
+      letter-spacing: -0.01em;
     }
     .card-schedule {
       font-size: 11px;
       font-weight: 600;
       padding: 3px 8px;
       border-radius: 6px;
-      background: #0b1120;
+      background: rgba(14, 165, 233, 0.12);
       color: #38bdf8;
-      border: 1px solid #0369a1;
+      border: 1px solid rgba(14, 165, 233, 0.3);
       white-space: nowrap;
       flex-shrink: 0;
     }
@@ -258,8 +263,8 @@
       line-height: 1.5;
     }
     .meta-table {
-      background: #0b1120;
-      border: 1px solid #1e293b;
+      background: #080c14;
+      border: 1px solid rgba(255, 255, 255, 0.06);
       border-radius: 8px;
       padding: 10px 12px;
       display: grid;
@@ -282,26 +287,27 @@
       border-radius: 999px;
       white-space: nowrap;
     }
-    .chip-ready { background: rgba(22, 163, 74, 0.18); color: #4ade80; border: 1px solid #16a34a; }
-    .chip-watching { background: rgba(14, 165, 233, 0.18); color: #38bdf8; border: 1px solid #0284c7; }
+    .chip-ready { background: rgba(16, 185, 129, 0.16); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); }
+    .chip-watching { background: rgba(14, 165, 233, 0.16); color: #38bdf8; border: 1px solid rgba(14, 165, 233, 0.4); }
     .chip-scheduled { background: rgba(148, 163, 184, 0.16); color: #e2e8f0; border: 1px solid #94a3b8; }
-    .chip-pending { background: rgba(245, 158, 11, 0.18); color: #fbbf24; border: 1px solid #d97706; }
+    .chip-pending { background: rgba(245, 158, 11, 0.16); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.4); }
     .panel {
       max-width: 1240px;
       margin: 16px auto 0;
       padding: 0 16px;
     }
     .panel-box {
-      background: #131c31;
-      border: 1px solid #263554;
+      background: #0e1526;
+      border: 1px solid rgba(255, 255, 255, 0.08);
       border-radius: 12px;
       padding: 16px;
       min-width: 0;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
     }
     .panel-box h3 {
-      font-size: 14px;
+      font-size: 13px;
       text-transform: uppercase;
-      letter-spacing: 0.05em;
+      letter-spacing: 0.06em;
       margin-bottom: 12px;
       color: #94a3b8;
     }
@@ -311,8 +317,8 @@
       gap: 8px;
     }
     .file-item {
-      background: #0b1120;
-      border: 1px solid #1e293b;
+      background: #080c14;
+      border: 1px solid rgba(255, 255, 255, 0.06);
       border-radius: 8px;
       padding: 10px 14px;
       display: flex;
@@ -331,7 +337,7 @@
     .history-table th {
       text-align: left;
       padding: 8px 10px;
-      border-bottom: 1px solid #1e293b;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
       color: #94a3b8;
       font-weight: 700;
       font-size: 11px;
@@ -339,13 +345,13 @@
     }
     .history-table td {
       padding: 9px 10px;
-      border-bottom: 1px solid #1e293b;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
       color: #cbd5e1;
       font-variant-numeric: tabular-nums;
     }
     .log-box {
-      background: #070b14;
-      border: 1px solid #1e293b;
+      background: #060911;
+      border: 1px solid rgba(255, 255, 255, 0.06);
       border-radius: 8px;
       padding: 10px 14px;
       font-family: monospace;
@@ -362,8 +368,8 @@
       margin-bottom: 14px;
     }
     .reconcile-kpi-card {
-      background: #0b1120;
-      border: 1px solid #1e293b;
+      background: #080c14;
+      border: 1px solid rgba(255, 255, 255, 0.08);
       border-radius: 10px;
       padding: 12px 14px;
       display: flex;
@@ -394,8 +400,8 @@
       justify-content: space-between;
       flex-wrap: wrap;
       gap: 10px;
-      background: #0b1120;
-      border: 1px solid #1e293b;
+      background: #080c14;
+      border: 1px solid rgba(255, 255, 255, 0.08);
       border-radius: 10px;
       padding: 10px 12px;
       margin-bottom: 12px;
@@ -410,8 +416,8 @@
       font-size: 12px;
       font-weight: 700;
       color: #cbd5e1;
-      background: #131c31;
-      border: 1px solid #263554;
+      background: #111a2e;
+      border: 1px solid rgba(255, 255, 255, 0.1);
       padding: 5px 10px;
       border-radius: 999px;
       font-variant-numeric: tabular-nums;
@@ -438,8 +444,8 @@
     .reconcile-table th {
       text-align: left;
       padding: 6px 4px;
-      background: #0b1120;
-      border-bottom: 1px solid #263554;
+      background: #080c14;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
       color: #94a3b8;
       font-weight: 700;
       font-size: 10px;
@@ -452,14 +458,14 @@
       text-align: right;
     }
     .reconcile-table td {
-      padding: 6px 4px;
-      border-bottom: 1px solid #1e293b;
+      padding: 7px 4px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
       color: #e2e8f0;
       vertical-align: middle;
-      line-height: 1.3;
+      line-height: 1.35;
     }
     .reconcile-table tr:hover td {
-      background: rgba(30, 41, 59, 0.35);
+      background: rgba(255, 255, 255, 0.03);
     }
     .num-col {
       text-align: right;
@@ -499,13 +505,13 @@
     }
     .period-pill {
       display: inline-block;
-      background: #1e293b;
+      background: #111a2e;
       color: #f8fafc;
       font-weight: 700;
       font-size: 10.5px;
       padding: 2px 6px;
       border-radius: 5px;
-      border: 1px solid #334155;
+      border: 1px solid rgba(255, 255, 255, 0.1);
       white-space: nowrap;
       font-variant-numeric: tabular-nums;
     }
@@ -635,7 +641,7 @@
       <div>
         <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
           <h1>Sunseeker Properties &#8212; Autonomous Cloud Agent</h1>
-          <span class="version-badge" id="app-version">v04.05</span>
+          <span class="version-badge" id="app-version">v05.06</span>
         </div>
         <div class="brand-sub">Unattended Google Apps Script Daemon &#183; Synced with Google Drive &amp; Mac Desktop</div>
       </div>
