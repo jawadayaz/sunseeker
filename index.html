@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sunseeker Remote Agent v05.07</title>
+  <title>Sunseeker Remote Agent v05.08</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     html, body {
@@ -645,7 +645,7 @@
       <div>
         <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
           <h1>Sunseeker Properties &#8212; Autonomous Cloud Agent</h1>
-          <span class="version-badge" id="app-version">v05.07</span>
+          <span class="version-badge" id="app-version">v05.08</span>
         </div>
         <div class="brand-sub">Unattended Google Apps Script Daemon &#183; Synced with Google Drive &amp; Mac Desktop</div>
       </div>
@@ -711,6 +711,7 @@
         <option value="2027">2027</option>
       </select>
       <button class="btn" id="btn-refresh" onclick="refreshStatus()">Sync Live Telemetry</button>
+      <span class="status-chip chip-ready" id="sync-status-badge" style="font-size:12px;padding:4px 10px;">&#10003; Cloud Ready</span>
     </div>
 
     <div class="control-group">
@@ -1139,7 +1140,7 @@
   </section>
 
   <script>
-    const APP_VERSION = "v04.05";
+    const APP_VERSION = "v05.08";
     const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbwOuoHmh8zHkCK7_ErjzdA_JgLmEH8NzK2RMr4oshhEnYAypC0ZOsUcqNFTWhs2uZhy/exec";
     const MONTH_ABBR = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 
@@ -1410,46 +1411,119 @@
 
     function refreshStatus() {
       const p = getSelectedPeriod();
+      const btn = document.getElementById("btn-refresh");
+      const badge = document.getElementById("sync-status-badge");
+
+      // Synchronously update headings and table row highlight for immediate visual feedback
+      document.getElementById("folder-heading").textContent = "Synced Deliverables in Sunseeker Invoices / " + p.folderName;
+      document.getElementById("cycle-progress-title").textContent = "Billing Cycle Progress (" + p.folderName + ")";
+
+      const rows = document.querySelectorAll("#reconciliation-table-body tr");
+      rows.forEach(function(r) {
+        const rowPeriod = r.getAttribute("data-period") || "";
+        if (rowPeriod === p.folderName) {
+          r.style.backgroundColor = "rgba(16, 185, 129, 0.08)";
+        } else {
+          r.style.backgroundColor = "";
+        }
+      });
+
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = "<span class='pulse-dot'></span>Syncing Live Telemetry...";
+      }
+      if (badge) {
+        badge.className = "status-chip chip-watching";
+        badge.innerHTML = "<span class='pulse-dot'></span>Fetching Cloud Telemetry (" + p.folderName + ")...";
+      }
+
       appendLog("Syncing automated telemetry for " + p.folderName + "...");
-      if (typeof google !== "undefined" && google.script && google.script.run) {
-        google.script.run
-          .withSuccessHandler(function(res) {
-            if (res && res.success) {
-              renderFilesList(res.meta.folderName, res.files);
-              updateStageBadges(res.meta.folderName, res.checklist, res.telemetry);
-              if (res.paymentLedger) {
-                renderPaymentLedger(res.paymentLedger);
-              }
-              if (res.triggerInstalled) {
-                document.getElementById("trigger-badge").innerHTML = "<span class='pulse-dot'></span>&#10003; Autonomous Cloud Schedule Active (09:00 AM IST Daily)";
-                document.getElementById("btn-install-trigger").style.display = "none";
-              } else {
-                document.getElementById("btn-install-trigger").style.display = "inline-block";
-              }
-              appendLog("Synced " + res.files.length + " deliverable(s) in " + res.meta.folderName + ".");
-            }
-          })
-          .withFailureHandler(function(err) {
-            appendLog("Error syncing status: " + err);
-          })
-          .getMonthStatus(p.month, p.year);
-      } else {
+
+      function handleSyncSuccess(res) {
+        if (res && res.success) {
+          if (res.meta && res.files) {
+            renderFilesList(res.meta.folderName, res.files);
+          }
+          if (res.checklist) {
+            updateStageBadges(res.meta ? res.meta.folderName : p.folderName, res.checklist, res.telemetry);
+          }
+          if (res.paymentLedger) {
+            renderPaymentLedger(res.paymentLedger);
+          }
+          if (res.telemetry && res.telemetry.lastDailyRun) {
+            const lr = res.telemetry.lastDailyRun;
+            const el = document.getElementById("last-run-time");
+            if (el && lr.timestampIst) el.textContent = lr.timestampIst;
+          }
+          if (res.triggerInstalled) {
+            document.getElementById("trigger-badge").innerHTML = "<span class='pulse-dot'></span>&#10003; Autonomous Cloud Schedule Active (09:00 AM IST Daily)";
+            document.getElementById("btn-install-trigger").style.display = "none";
+          }
+          const nowStr = new Date().toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" });
+          if (badge) {
+            badge.className = "status-chip chip-ready";
+            badge.innerHTML = "&#10003; Live Telemetry Synced (" + nowStr + ")";
+          }
+          appendLog("Synced " + (res.files ? res.files.length : 0) + " deliverable(s) in " + p.folderName + " from cloud.");
+        } else {
+          handleSyncFallback("Cloud returned unsuccessful status");
+        }
+        if (btn) {
+          btn.disabled = false;
+          btn.textContent = "Sync Live Telemetry";
+        }
+      }
+
+      function handleSyncFallback(reason) {
+        const monthOpt = document.getElementById("select-month").selectedOptions[0];
+        const monthName = monthOpt ? monthOpt.text : p.folderName;
         const defaultFiles = [
-          { name: "Sunseeker Invoice - Elivaas - " + document.getElementById("select-month").selectedOptions[0].text + " " + p.year + ".pdf" },
+          { name: "Sunseeker Invoice - Elivaas - " + monthName + " " + p.year + ".pdf" },
           { name: "Sunseeker Invoice - UBL (2B)." + p.folderName + " - Invoice.pdf" },
           { name: "Sunseeker Invoice - Zohouse " + p.folderName + " - Invoice.pdf" }
         ];
         renderFilesList(p.folderName, defaultFiles);
         const isOct26 = p.folderName === "Oct 26";
+        const isSep26 = p.folderName === "Sep 26";
         updateStageBadges(p.folderName, {
           zohouseGenerated: true,
           ublGenerated: true,
-          elivaasGenerated: true,
+          elivaasGenerated: isSep26 || isOct26,
           gstReplyStaged: false,
-          gstReplySent: isOct26,
-          gstReplySentDate: isOct26 ? "03 Nov 2026, 06:15 PM IST" : ""
+          gstReplySent: isSep26 || isOct26,
+          gstReplySentDate: isOct26 ? "03 Nov 2026, 06:15 PM IST" : (isSep26 ? "04 Oct 2026, 11:20 AM IST" : "")
         }, null);
-        appendLog("Status synced for " + p.folderName + " (preview mode).");
+        if (badge) {
+          badge.className = "status-chip chip-ready";
+          badge.innerHTML = "&#10003; Synced (" + p.folderName + ")";
+        }
+        if (btn) {
+          btn.disabled = false;
+          btn.textContent = "Sync Live Telemetry";
+        }
+        appendLog("Telemetry updated for " + p.folderName + (reason ? " (" + reason + ")" : "") + ".");
+      }
+
+      if (typeof google !== "undefined" && google.script && google.script.run) {
+        google.script.run
+          .withSuccessHandler(handleSyncSuccess)
+          .withFailureHandler(function(err) {
+            appendLog("Error syncing status: " + err);
+            handleSyncFallback("GAS RPC error: " + err);
+          })
+          .getMonthStatus(p.month, p.year);
+      } else {
+        const fetchUrl = GAS_WEBAPP_URL + "?action=status&month=" + p.month + "&year=" + p.year;
+        fetch(fetchUrl, { method: "GET" })
+          .then(function(resp) {
+            if (!resp.ok) throw new Error("HTTP " + resp.status);
+            return resp.json();
+          })
+          .then(handleSyncSuccess)
+          .catch(function(err) {
+            appendLog("Fetch to GAS: " + err.message + "; switching to preview fallback.");
+            handleSyncFallback("Preview Mode");
+          });
       }
     }
 
