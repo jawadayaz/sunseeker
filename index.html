@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sunseeker Remote Agent v05.08</title>
+  <title>Sunseeker Remote Agent v06.09</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     html, body {
@@ -645,7 +645,7 @@
       <div>
         <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
           <h1>Sunseeker Properties &#8212; Autonomous Cloud Agent</h1>
-          <span class="version-badge" id="app-version">v05.08</span>
+          <span class="version-badge" id="app-version">v06.09</span>
         </div>
         <div class="brand-sub">Unattended Google Apps Script Daemon &#183; Synced with Google Drive &amp; Mac Desktop</div>
       </div>
@@ -1060,20 +1060,20 @@
       </div>
     </div>
 
-    <!-- Stage 6: 5th of Month HDFC Bank Statement & Payment Reconciliation -->
+    <!-- Stage 6: Daily HDFC Bank Reconciliation & Payment Reminders -->
     <div class="card" id="card-bank-reconcile">
       <div>
         <div class="card-header">
-          <div class="card-title">Stage 6 &#183; Bank Statement &amp; Payment Reconciliation</div>
-          <span class="card-schedule">Auto: 5th of Month</span>
+          <div class="card-title">Stage 6 &#183; Daily Bank Reconciliation &amp; Payment Reminders</div>
+          <span class="card-schedule">Auto: Daily 09:00 IST</span>
         </div>
         <p class="card-desc" style="margin-top:8px;">
-          Reviews the Sunseeker HDFC Bank Statement (A/c <strong>17552000000580</strong>, Customer ID <strong>53755164</strong>, arriving by the 5th) plus credit alerts &amp; remittance advices to update payment pending/received statuses across all invoices starting Sep 26.
+          Reviews Sunseeker HDFC Bank credit alerts &amp; remittance advices daily starting 1st of month. Automatically sends follow-up payment reminders every 5 business days for unpaid invoices past the later of 15th / 5 biz days.
         </p>
         <div class="meta-table" style="margin-top:12px;">
-          <div class="meta-row"><span class="meta-key">Automated Trigger:</span><span class="meta-val" id="sched-bank">5th of Every Month, 09:00 IST</span></div>
-          <div class="meta-row"><span class="meta-key">Last Statement Review:</span><span class="meta-val" id="last-bank">05 Nov 2026, 09:00 IST &#183; Oct Statement Verified</span></div>
-          <div class="meta-row"><span class="meta-key">Next Scheduled Run:</span><span class="meta-val" id="next-bank">05 Dec 2026, 09:00 AM IST (Nov Statement)</span></div>
+          <div class="meta-row"><span class="meta-key">Automated Trigger:</span><span class="meta-val" id="sched-bank">Daily from 1st of Month, 09:00 IST</span></div>
+          <div class="meta-row"><span class="meta-key">Last Statement Review:</span><span class="meta-val" id="last-bank">12 Nov 2026, 09:13 IST &#183; Daily Check Verified</span></div>
+          <div class="meta-row"><span class="meta-key">Next Scheduled Run:</span><span class="meta-val" id="next-bank">13 Nov 2026, 09:00 AM IST</span></div>
         </div>
       </div>
       <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
@@ -1140,7 +1140,7 @@
   </section>
 
   <script>
-    const APP_VERSION = "v05.08";
+    const APP_VERSION = "v06.09";
     const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbwOuoHmh8zHkCK7_ErjzdA_JgLmEH8NzK2RMr4oshhEnYAypC0ZOsUcqNFTWhs2uZhy/exec";
     const MONTH_ABBR = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 
@@ -1246,19 +1246,19 @@
       ledger.forEach(function(row) {
         const isNotBilled = row.status === "Not Yet Billed";
         const isReceived = row.status && row.status.indexOf("Received") >= 0;
-        const isPending = row.status === "Pending";
+        const isPending = row.status && row.status.indexOf("Pending") >= 0;
 
         if (isReceived) receivedCount++;
         if (isPending) pendingCount++;
 
         let badgeClass = "chip-scheduled";
-        let badgeLabel = "&#128467;&#65039; Scheduled (Dec)";
+        let badgeLabel = "&#128467;&#65039; Scheduled";
         if (isReceived) {
           badgeClass = "chip-ready";
           badgeLabel = "&#10003; " + row.status;
         } else if (isPending) {
           badgeClass = "chip-pending";
-          badgeLabel = "&#9203; Pending";
+          badgeLabel = "&#9203; " + row.status;
         }
 
         const gstStr = isNotBilled
